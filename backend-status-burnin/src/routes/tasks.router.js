@@ -7,8 +7,8 @@ export const tasksRouter = Router();
 //getAll
 tasksRouter.get('/', TaskController.getAll);
 
-// //create
-// tasksRouter.post('/', TaskController.create);
+//create
+tasksRouter.post('/', TaskController.create);
 
 // //delete
 // tasksRouter.delete('/:id', TaskController.delete);

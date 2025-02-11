@@ -40,7 +40,8 @@ export class UserController {
             return res.status(201).send({ result });
 
         } catch (error) {
-            return res.status(500).send({ error });
+            console.log(error)
+            return res.status(500).send({ message: 'Server error' })
         }
     }
 

@@ -20,8 +20,11 @@ export const Task = sequelize.define('task', {
     status: {
         type: DataTypes.TEXT,
         allowNull: false,
-    }
-
+    },
+    created_by: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
 }, {
     tableName: 'tasks',
     timestamps: false,

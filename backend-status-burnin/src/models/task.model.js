@@ -1,4 +1,5 @@
 import { Task } from "../schemas/task.schema.js";
+import { User } from "../schemas/user.schema.js";
 
 
 
@@ -17,6 +18,14 @@ export class TaskModel {
 
     static async create({ input }) {
         try {
+            const user_exists = await User.findOne({
+                where: {
+                    name: input.created_by
+                }
+            })
+
+            if (!user_exists) return null;
+
             const newTask = await Task.create(input)
             return newTask;
         } catch (error) {
@@ -43,8 +52,11 @@ export class TaskModel {
         const task = await Task.findByPk(id);
         if (!task) return null;
 
-
         const updatedTask = await task.update(input);
+
+        //add changes
+        //if move it
+        //if add new desc
 
         return updatedTask;
     }

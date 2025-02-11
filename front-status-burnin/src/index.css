@@ -1,7 +1,30 @@
 @import "tailwindcss";
 
-.bg-noise {
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAehJREFUeNrsmE1qAkEQRc8s+gjSJew6I+kTrMyDlYU7MEoJ8gw4cO2LlpuwQ7wdGeV4129bGz2W48ttOfDwAPgSShyJEIQqiyI4XhXIYkOJ+XXfz8dEWkzJwxi7lpPN94T0Q94dt4BpCJicA6IZMB0cmAgAzZTFjQB7Deqrgz7o2XI7sKzk++3REhGK5DNZ6G6Qu+w8rrUG7WAt7Bk/QRmwD1umro0cM46+BzBSgBr08CUUSBGsBo15uGpMTUNsn2PkSNGWEsZrGEuHmakCMB79Z0axWDq1CG6ZjVAopcII1AJz2KNDm2mFaikXEHtY79aaEIk9ZUSovfuqPcyc22A/c8q0jn+IC+28vPP6hX1BvubFfA+eG2/mDkk9PWGWPp9B8SuAABBDEAAEEMQAABBDEAAEEMQCCTfhgAAOfgBESf2pHzye4AAAAAElFTkSuQmCC");
-    background-repeat: repeat;
-    background-size: 10rem;
+/* globals.css */
+/* Ajusta el grosor, color y bordes para que se vea un estilo Apple-like en toda la página */
+
+/* Barra de scroll */
+::-webkit-scrollbar {
+    width: 8px;
+    /* Grosor de la barra de desplazamiento */
+}
+
+/* Pista (track) de la barra */
+::-webkit-scrollbar-track {
+    background: transparent;
+    /* Fondo transparente */
+}
+
+/* Pulgar (thumb) de la barra */
+::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 9999px;
+    /* Bordes redondeados */
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+/* Hover: resaltar un poco el pulgar */
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.4);
 }
