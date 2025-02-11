@@ -13,6 +13,16 @@ export class TaskController {
         }
     }
 
+    static async getStatus(req, res) {
+        try {
+            const status = await TaskModel.getStatus();
+            return res.status(200).send(status);
+        } catch (error) {
+            console.error('Error in TaskController.getStatus', error);
+            throw error;
+        }
+    }
+
     static async create(req, res) {
         try {
             const result = await TaskModel.create({ input: req.body });

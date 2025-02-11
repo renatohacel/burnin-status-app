@@ -1,3 +1,4 @@
+import { Status } from "../schemas/status.schema.js";
 import { Task } from "../schemas/task.schema.js";
 import { User } from "../schemas/user.schema.js";
 
@@ -16,6 +17,16 @@ export class TaskModel {
         }
     }
 
+    static async getStatus() {
+        try {
+            const status = await Status.findAll()
+            return status;
+        } catch (error) {
+            console.error('Error in TaskModel.getStatus', error);
+            throw error;
+        }
+    }
+
     static async create({ input }) {
         try {
             const user_exists = await User.findOne({
@@ -26,8 +37,18 @@ export class TaskModel {
 
             if (!user_exists) return null;
 
+            delete input.id
+
             const newTask = await Task.create(input)
-            return newTask;
+
+            //update status
+            const newStatus = await Status.create({
+                task_id: newTask.id,
+                date: newTask.date,
+                time: newTask.time,
+                updated_by: newTask.created_by,
+            })
+            return { newTask, newStatus };
         } catch (error) {
             console.error('Error in TaskModel.create', error);
             throw error;
@@ -52,11 +73,17 @@ export class TaskModel {
         const task = await Task.findByPk(id);
         if (!task) return null;
 
-        const updatedTask = await task.update(input);
+        //update status
+        await Status.create({
+            task_id: id,
+            date: input.date,
+            time: input.time,
+            updated_by: input.updated_by,
+        })
 
-        //add changes
-        //if move it
-        //if add new desc
+        delete input.updated_by
+
+        const updatedTask = await task.update(input);
 
         return updatedTask;
     }

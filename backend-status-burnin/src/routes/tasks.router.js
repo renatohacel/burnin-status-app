@@ -7,6 +7,9 @@ export const tasksRouter = Router();
 //getAll
 tasksRouter.get('/', TaskController.getAll);
 
+//getStatus
+tasksRouter.get('/status', TaskController.getStatus);
+
 //create
 tasksRouter.post('/', TaskController.create);
 

@@ -11,7 +11,7 @@ export const Navbar = () => {
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
           <NavLink className="text-2xl font-medium hover:text-blue-500 transition-all duration-100">
-            Burnin Status
+            Burnin Task Status
           </NavLink>
           {/* Button Section */}
           <div className="flex items-center gap-2">

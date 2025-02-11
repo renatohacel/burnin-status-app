@@ -28,3 +28,99 @@
 ::-webkit-scrollbar-thumb:hover {
     background-color: rgba(255, 255, 255, 0.4);
 }
+
+/* Definimos la keyframe */
+@keyframes iosAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Clase que aplica la animación */
+.ios-appear {
+    animation: iosAppear 0.3s ease-out forwards;
+}
+
+.ios-alert-popup {
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.ios-alert-btn {
+    background-color: transparent;
+    color: #3b82f6;
+    /* Azul estilo iOS */
+    border-radius: 0;
+    border: none;
+}
+
+/* ios-toast.css */
+
+/* Fondo translúcido, bordes redondeados, etc. */
+.ios-toast-popup {
+    background: rgba(0, 0, 0, 0.5) !important;
+    /* o el color que prefieras */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px !important;
+    /* Muy redondeado, al estilo iOS */
+    color: #fff !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    /* Ajuste de padding para que se vea más “iOS-like” */
+    padding: 0.75rem 1rem !important;
+}
+
+/* El título dentro del toast */
+.ios-toast-title {
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    margin: 0 !important;
+}
+
+/* Barra de progreso “sutil” */
+.ios-toast-progress>.swal2-progress-bar {
+    background: rgba(255, 255, 255, 0.6);
+    height: 3px;
+    border-radius: 2px;
+}
+
+/* Animaciones de entrada y salida */
+@keyframes iosToastShow {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes iosToastHide {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+}
+
+/* Clases que SweetAlert2 usará para show/hide */
+.ios-toast-show {
+    animation: iosToastShow 0.3s ease-out forwards;
+}
+
+.ios-toast-hide {
+    animation: iosToastHide 0.2s ease-in forwards;
+}

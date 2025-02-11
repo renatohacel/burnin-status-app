@@ -1,8 +1,7 @@
-import { Plus } from "lucide-react";
 import { TaskCard } from "../task/TaskCard";
 import { useDroppable } from "@dnd-kit/core";
 
-export const Column = ({ column, tasks }) => {
+export const Column = ({ column, tasks, status }) => {
   const { setNodeRef } = useDroppable({
     id: column.title,
   });
@@ -22,7 +21,12 @@ export const Column = ({ column, tasks }) => {
           className="flex-1 min-h-0 overflow-x-hidden pr-2 custom-scrollbar space-y-2"
         >
           {tasks.map((task) => (
-            <TaskCard key={task.id} task={task} color={column.color} />
+            <TaskCard
+              key={task.id}
+              task={task}
+              color={column.color}
+              status={status.filter((st) => st.task_id === task.id)}
+            />
           ))}
         </div>
 
