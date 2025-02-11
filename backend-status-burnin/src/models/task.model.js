@@ -74,7 +74,7 @@ export class TaskModel {
         if (!task) return null;
 
         //update status
-        await Status.create({
+        const newStatus = await Status.create({
             task_id: id,
             date: input.date,
             time: input.time,
@@ -85,6 +85,6 @@ export class TaskModel {
 
         const updatedTask = await task.update(input);
 
-        return updatedTask;
+        return { updatedTask, newStatus };
     }
 }

@@ -49,4 +49,16 @@ export class TaskController {
             return res.status(500).send({ message: 'Server error' })
         }
     }
+
+    static async delete(req, res) {
+        try {
+            const { id } = req.params
+            const result = await TaskModel.delete({ id })
+            if (!result) return res.status(404).send({ message: 'task not found' })
+            return res.status(200).send({ message: 'task successfully deleted ' })
+        } catch (error) {
+            console.log(error)
+            return res.status(500).send({ message: 'Server error' })
+        }
+    }
 }

@@ -13,8 +13,8 @@ tasksRouter.get('/status', TaskController.getStatus);
 //create
 tasksRouter.post('/', TaskController.create);
 
-// //delete
-// tasksRouter.delete('/:id', TaskController.delete);
+//delete
+tasksRouter.delete('/:id', TaskController.delete);
 
 //update
 tasksRouter.patch('/:id', TaskController.update);
