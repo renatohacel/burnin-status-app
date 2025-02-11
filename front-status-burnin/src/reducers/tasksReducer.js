@@ -12,6 +12,16 @@ export const tasksReducer = (state = [], action) => {
                 }
                 return task;
             });
+        case 'updateStateTask':
+            return state.map((task) => {
+                if (task.id === action.payload.id) {
+                    return {
+                        ...task,
+                        ...action.payload,
+                    };
+                }
+                return task;
+            });
         case 'deleteTask':
             return state.filter(tks => tks.id !== action.payload);
         case 'loadTasks':

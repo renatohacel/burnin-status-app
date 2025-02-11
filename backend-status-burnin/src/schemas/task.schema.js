@@ -25,6 +25,14 @@ export const Task = sequelize.define('task', {
         type: DataTypes.TEXT,
         allowNull: false,
     },
+    date: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
+    time: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
 }, {
     tableName: 'tasks',
     timestamps: false,

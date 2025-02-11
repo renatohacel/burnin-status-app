@@ -1,25 +1,38 @@
 import { useReducer, useState } from "react"
 import { tasksReducer } from "../reducers/tasksReducer"
-import { getAllTasks } from "../services/tasksService";
+import { changeStatus, getAllTasks } from "../services/tasksService";
 
 
 
 export const useTasks = () => {
     const [tasks, dispatch] = useReducer(tasksReducer, [])
-    const [isLoading, setIsLoading] = useState(false);
 
     const getTasks = async () => {
         try {
-            setIsLoading(true);
-            const result = await getAllTasks();
+            const response = await getAllTasks();
             dispatch({
                 type: 'loadTasks',
-                payload: result.data
+                payload: response.data
             });
         } catch (error) {
             console.error('Error fetching tasks:', error)
-        } finally {
-            setIsLoading(false);
+        }
+    }
+
+    const updateTaskState = async (task) => {
+        const oldTask = tasks.find((t) => t.id === task.id);
+        dispatch({
+            type: 'updateStateTask',
+            payload: task
+        })
+        try {
+            await changeStatus(task);
+        } catch (error) {
+            dispatch({
+                type: 'updateTask',
+                payload: oldTask,
+            });
+            console.error('Error change status task:', error)
         }
     }
 
@@ -29,7 +42,7 @@ export const useTasks = () => {
 
 
 
-
+        updateTaskState,
         getTasks
     }
 }

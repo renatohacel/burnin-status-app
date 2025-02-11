@@ -13,5 +13,5 @@ tasksRouter.post('/', TaskController.create);
 // //delete
 // tasksRouter.delete('/:id', TaskController.delete);
 
-// //update
-// tasksRouter.patch('/:id', TaskController.update);
+//update
+tasksRouter.patch('/:id', TaskController.update);

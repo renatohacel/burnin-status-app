@@ -17,7 +17,7 @@ export const Navbar = () => {
           <div className="flex items-center gap-2">
             {/* User */}
             <button
-              className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors hover:cursor-pointer"
+              className="w-8 h-8 rounded-full hover:text-blue-500 bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors hover:cursor-pointer"
               aria-label="User Profile"
             >
               <FaUser className="w-4 h-4" />
@@ -25,7 +25,7 @@ export const Navbar = () => {
 
             {/* Logout */}
             <button
-              className="w-20 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-sm font-semibold hover:cursor-pointer"
+              className="w-20 hover:text-blue-500 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-sm font-semibold hover:cursor-pointer"
               aria-label="Log Out"
               onClick={handlerLogout}
             >

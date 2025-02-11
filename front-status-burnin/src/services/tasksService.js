@@ -9,4 +9,13 @@ export const getAllTasks = async () => {
     } catch (error) {
         return error.response
     }
-} 
+}
+
+export const changeStatus = async (task) => {
+    try {
+        const response = await axios.patch(`${BASE_URL}/${task.id}`, { status: task.status }, { withCredentials: true })
+        return response;
+    } catch (error) {
+        return error.response
+    }
+}

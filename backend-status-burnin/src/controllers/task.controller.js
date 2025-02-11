@@ -17,10 +17,23 @@ export class TaskController {
         try {
             const result = await TaskModel.create({ input: req.body });
             if (result === null) {
-                return res.status(409).send({ error: 'Num Employee does not exists' })
+                return res.status(409).send({ error: 'Employee does not exist' })
             }
             return res.status(201).send({ result })
 
+        } catch (error) {
+            console.log(error)
+            return res.status(500).send({ message: 'Server error' })
+        }
+    }
+
+    static async update(req, res) {
+        try {
+            const { id } = req.params
+            const result = await TaskModel.update({ id, input: req.body })
+            if (result === null) return res.status(404).json({ message: 'Task not found' });
+
+            return res.status(201).send({ result });
         } catch (error) {
             console.log(error)
             return res.status(500).send({ message: 'Server error' })
