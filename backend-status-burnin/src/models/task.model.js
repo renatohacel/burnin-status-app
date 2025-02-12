@@ -82,6 +82,10 @@ export class TaskModel {
             const task = await Task.findByPk(id);
             if (!task) return false;
 
+            await Status.destroy({
+                where: { task_id: task.id }
+            })
+
             await task.destroy();
 
             return true;
