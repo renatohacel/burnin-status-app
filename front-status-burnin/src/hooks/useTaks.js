@@ -100,7 +100,7 @@ export const useTasks = () => {
                 task_id: task.id,
                 date: task.date,
                 time: task.time,
-                input: 'Status Updated',
+                input: 'Status Updated To',
                 value: task.status,
                 updated_by: task.updated_by
             }
@@ -151,7 +151,7 @@ export const useTasks = () => {
                             date: task.date,
                             time: task.time,
                             updated_by: task.updated_by,
-                            input: 'Title Updated',
+                            input: 'Title Updated To',
                             value: task.title
                         }
                     })
@@ -164,8 +164,8 @@ export const useTasks = () => {
                             date: task.date,
                             time: task.time,
                             updated_by: task.updated_by,
-                            input: 'Description Updated',
-                            value: task.title
+                            input: 'Description Updated To',
+                            value: task.description
                         }
                     })
                 }
@@ -177,8 +177,8 @@ export const useTasks = () => {
                             date: task.date,
                             time: task.time,
                             updated_by: task.updated_by,
-                            input: 'Status Updated',
-                            value: task.title
+                            input: 'Status Updated To',
+                            value: task.status
                         }
                     })
                 }

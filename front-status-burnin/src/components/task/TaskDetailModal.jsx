@@ -83,13 +83,20 @@ export const TaskDetailModal = () => {
                   key={index}
                   className="bg-white/10 p-3 rounded-lg text-sm text-white/80 border border-white/15"
                 >
-                  <p className="mb-2 text-lg font-semibold text-blue-400">
-                    {`${change.input}: `}
-                    <span className="text-white font-bold">{change.value}</span>
+                  {/* Input (encima, resalta más) */}
+                  <p className="text-sm font-semibold text-white/70 uppercase tracking-wide">
+                    {change.input}
                   </p>
-                  <div className="flex justify-between text-xs text-white/60">
-                    <span className="">{change.updated_by}</span>
-                    <span className="">{`${change.date} at ${change.time}hrs`}</span>
+
+                  {/* Value (debajo, más sutil) */}
+                  <p className="text-xs font-medium text-white/50 mt-0.5">
+                    {change.value}
+                  </p>
+
+                  {/* Información secundaria (usuario y fecha/hora) */}
+                  <div className="flex justify-between text-xs text-white/40 mt-2">
+                    <span>{change.updated_by}</span>
+                    <span>{`${change.date} at ${change.time}hrs`}</span>
                   </div>
                 </li>
               ))}

@@ -3,7 +3,7 @@ export const Footer = () => {
     <footer className="bg-black/50 backdrop-blur-xl border-t border-white/10 text-white text-xs py-3">
       <div className="container mx-auto text-center px-4 opacity-20">
         <div className="flex flex-col justify-center items-center gap-2">
-          An initiative by Eng. Renato Cal y Mayor
+          An initiative by Eng. Renato Cal y Mayor and Burnin Team
           <img
             src="/ingrasys-logo.png"
             alt=""

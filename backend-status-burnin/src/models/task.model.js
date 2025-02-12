@@ -103,7 +103,7 @@ export class TaskModel {
                 date: input.date,
                 time: input.time,
                 updated_by: input.updated_by,
-                input: 'Title Updated',
+                input: 'Title Updated To',
                 value: input.title
             })
         }
@@ -114,7 +114,7 @@ export class TaskModel {
                 date: input.date,
                 time: input.time,
                 updated_by: input.updated_by,
-                input: 'Description Updated',
+                input: 'Description Updated To',
                 value: input.description
             })
         }
@@ -125,7 +125,7 @@ export class TaskModel {
                 date: input.date,
                 time: input.time,
                 updated_by: input.updated_by,
-                input: 'Status Updated',
+                input: 'Status Updated To',
                 value: input.status
             })
         }
