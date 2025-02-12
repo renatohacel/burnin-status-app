@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { FaUser } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../auth/context/AuthContext";
 import { StatusContext } from "../../context/StatusContext";
 
@@ -8,13 +8,27 @@ export const Navbar = () => {
   const { login, handlerLogout } = useContext(AuthContext);
   const { profileHook } = useContext(StatusContext);
   const { handleOpenProfile } = profileHook;
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const onClickHome = () => {
+    if (location.pathname === "/home") {
+      window.location.reload();
+    } else {
+      navigate("/home");
+    }
+  };
+
   return (
     <header className="sticky top-0 backdrop-blur-xl bg-black/50 border-b border-white/10 z-10">
       <div className="container mx-auto px-4 py-6">
         <div className="flex justify-between items-center">
-          <NavLink className="text-2xl font-medium hover:text-blue-500 transition-all duration-100">
+          <button
+            className="text-2xl font-medium hover:text-blue-500 transition-all duration-100 cursor-pointer"
+            onClick={onClickHome}
+          >
             Burnin Task Status
-          </NavLink>
+          </button>
           {/* Button Section */}
           <div className="flex items-center gap-2">
             {/* User */}
