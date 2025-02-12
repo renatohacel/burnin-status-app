@@ -17,7 +17,7 @@ export const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 2000,
+    timer: 1000,
     timerProgressBar: true,
     customClass: {
         // Clases personalizadas que usaremos en CSS

@@ -2,10 +2,12 @@ import { useContext } from "react";
 import { FaUser } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../../auth/context/AuthContext";
+import { StatusContext } from "../../context/StatusContext";
 
 export const Navbar = () => {
   const { login, handlerLogout } = useContext(AuthContext);
-
+  const { profileHook } = useContext(StatusContext);
+  const { handleOpenProfile } = profileHook;
   return (
     <header className="sticky top-0 backdrop-blur-xl bg-black/50 border-b border-white/10 z-10">
       <div className="container mx-auto px-4 py-6">
@@ -19,6 +21,7 @@ export const Navbar = () => {
             <button
               className="w-8 h-8 rounded-full hover:text-blue-500 bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors hover:cursor-pointer"
               aria-label="User Profile"
+              onClick={handleOpenProfile}
             >
               <FaUser className="w-4 h-4" />
             </button>

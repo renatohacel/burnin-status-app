@@ -14,12 +14,14 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { TaskDetailModal } from "../../components/task/TaskDetailModal";
+import { UserProfile } from "../user_profile/UserProfile";
+import { FormUserProfile } from "../user_profile/form/FormUserProfile";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const StatusPage = () => {
   const { login } = useContext(AuthContext);
-  const { tasksHook } = useContext(StatusContext);
+  const { tasksHook, profileHook } = useContext(StatusContext);
   const {
     tasks,
     status,
@@ -31,6 +33,8 @@ export const StatusPage = () => {
     editing,
     visibleTask,
   } = tasksHook;
+
+  const { visibleUserProfile, visibleFormProfile } = profileHook;
 
   const [activeId, setActiveId] = useState(null);
 
@@ -131,6 +135,12 @@ export const StatusPage = () => {
         </Modal>
       )}
       {visibleTask && <TaskDetailModal />}
+      {visibleUserProfile && (
+        <Modal>
+          <UserProfile login={login} />
+        </Modal>
+      )}
+      {visibleFormProfile && <FormUserProfile />}
     </div>
   );
 };

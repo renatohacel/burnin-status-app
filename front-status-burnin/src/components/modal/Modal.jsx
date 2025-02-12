@@ -2,13 +2,17 @@ import { useContext } from "react";
 import { StatusContext } from "../../context/StatusContext";
 
 export const Modal = ({ children }) => {
-  const { tasksHook } = useContext(StatusContext);
+  const { tasksHook, profileHook } = useContext(StatusContext);
   const { handlerCloseForm } = tasksHook;
+  const { handleCloseProfile, handleCloseFormProfile } = profileHook;
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-      onClick={handlerCloseForm}
+      onClick={() => {
+        handlerCloseForm();
+        handleCloseProfile();
+      }}
     >
       <div
         className="
