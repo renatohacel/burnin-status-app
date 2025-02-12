@@ -25,6 +25,14 @@ export const Status = sequelize.define('status', {
         type: DataTypes.TEXT,
         allowNull: false,
     },
+    input: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
+    value: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
 }, {
     tableName: 'status',
     timestamps: false,

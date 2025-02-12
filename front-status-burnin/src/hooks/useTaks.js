@@ -1,6 +1,6 @@
 import { useReducer, useState } from "react"
 import { tasksReducer } from "../reducers/tasksReducer"
-import { changeStatus, createTask, getAllTasks, getStatus } from "../services/tasksService";
+import { changeStatus, createTask, deleteTask, getAllTasks, getStatus, updateTask } from "../services/tasksService";
 import { statusReducer } from "../reducers/statusReducer";
 import Swal from "sweetalert2";
 
@@ -59,7 +59,9 @@ export const useTasks = () => {
     const [tasks, dispatch] = useReducer(tasksReducer, [])
     const [status, dispatchStatus] = useReducer(statusReducer, [])
     const [taskSelected, setTaskSelected] = useState(initialTaskForm)
+    const [statusSelected, setStatusSelected] = useState([])
     const [visibleForm, setVisibleForm] = useState(false);
+    const [visibleTask, setVisibleTask] = useState(false);
     const [editing, setEditing] = useState(false)
 
     const getTasks = async () => {
@@ -93,12 +95,13 @@ export const useTasks = () => {
             payload: task
         })
         dispatchStatus({
-            type: 'updateStatus',
+            type: 'addStatus',
             payload: {
-                id: task.status_id,
                 task_id: task.id,
                 date: task.date,
                 time: task.time,
+                input: 'Status Updated',
+                value: task.status,
                 updated_by: task.updated_by
             }
         })
@@ -115,21 +118,72 @@ export const useTasks = () => {
 
 
     const handlerAddTask = async (task) => {
-        console.log(task)
         const { id } = task
         const response = id === 0
             ? await createTask(task)
-            : 'update'
+            : await updateTask(task)
 
         if (response.status === 201) {
             dispatch({
                 type: (id === 0) ? 'addTask' : 'updateTask',
-                payload: response.data.result.newTask
+                payload: (id === 0) ? response.data.result.newTask : response.data.result.updatedTask,
             })
-            dispatchStatus({
-                type: (id === 0) ? 'addStatus' : 'updateStatus',
-                payload: response.data.result.newStatus
-            })
+            if (id === 0) {
+                dispatchStatus({
+                    type: 'addStatus',
+                    payload: response.data.result.newStatusTitle
+                })
+                dispatchStatus({
+                    type: 'addStatus',
+                    payload: response.data.result.newStatusDesc
+                })
+                dispatchStatus({
+                    type: 'addStatus',
+                    payload: response.data.result.newStatusStu
+                })
+            } else if (id > 0) {
+                const oldTask = tasks.find((t) => t.id === id);
+                if (task.title !== oldTask.title) {
+                    dispatchStatus({
+                        type: 'addStatus',
+                        payload: {
+                            task_id: task.id,
+                            date: task.date,
+                            time: task.time,
+                            updated_by: task.updated_by,
+                            input: 'Title Updated',
+                            value: task.title
+                        }
+                    })
+                }
+                if (task.description !== oldTask.description) {
+                    dispatchStatus({
+                        type: 'addStatus',
+                        payload: {
+                            task_id: task.id,
+                            date: task.date,
+                            time: task.time,
+                            updated_by: task.updated_by,
+                            input: 'Description Updated',
+                            value: task.title
+                        }
+                    })
+                }
+                if (task.status !== oldTask.status) {
+                    dispatchStatus({
+                        type: 'addStatus',
+                        payload: {
+                            task_id: task.id,
+                            date: task.date,
+                            time: task.time,
+                            updated_by: task.updated_by,
+                            input: 'Status Updated',
+                            value: task.title
+                        }
+                    })
+                }
+
+            }
             if (id !== 0) {
                 handlerCloseForm();
                 Toast.fire({
@@ -152,15 +206,26 @@ export const useTasks = () => {
         }
     }
 
-    const handlerDeleteTask = async () => {
+    const handlerDeleteTask = async (id) => {
         ToastDeleted.fire({
-            title: "¿Está seguro de eliminar la entrada/salida?",
-            text: "Cuidado! Esta acción no se puede deshacer",
+            title: "Delete Task?",
+            text: "This action cannot be undone",
             icon: "warning",
             showCancelButton: true,
             showConfirmButton: true,
-            confirmButtonText: "Si, eliminar"
+            confirmButtonText: "Delete"
         }).then((result) => {
+            if (result.isConfirmed) {
+                deleteTask(id)
+                dispatch({
+                    type: 'deleteTask',
+                    payload: id
+                })
+                Toast.fire({
+                    title: "Tasks deleted successfully",
+                    icon: "success"
+                });
+            }
         });
     }
 
@@ -171,12 +236,25 @@ export const useTasks = () => {
 
     const handlerCloseForm = () => {
         setVisibleForm(false)
+        setTaskSelected(initialTaskForm)
     }
 
     const handlerTaskSelected = (task) => {
         setTaskSelected(task)
         setVisibleForm(true)
         setEditing(true)
+    }
+
+    const handlerTaskDetail = ({ task, status }) => {
+        setVisibleTask(true);
+        setTaskSelected(task)
+        setStatusSelected(status)
+    }
+
+    const handlerCloseTaskDetail = () => {
+        setVisibleTask(false);
+        setTaskSelected(initialTaskForm);
+        setStatusSelected([]);
     }
 
 
@@ -187,6 +265,8 @@ export const useTasks = () => {
         initialTaskForm,
         taskSelected,
         editing,
+        visibleTask,
+        statusSelected,
 
         handlerOpenForm,
         handlerCloseForm,
@@ -195,5 +275,8 @@ export const useTasks = () => {
         getTaskStatus,
         handlerTaskSelected,
         handlerAddTask,
+        handlerDeleteTask,
+        handlerTaskDetail,
+        handlerCloseTaskDetail,
     }
 }

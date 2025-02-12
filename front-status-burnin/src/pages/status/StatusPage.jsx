@@ -13,6 +13,7 @@ import { TaskForm } from "./taskForm/TaskForm";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import { TaskDetailModal } from "../../components/task/TaskDetailModal";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -28,6 +29,7 @@ export const StatusPage = () => {
     visibleForm,
     handlerOpenForm,
     editing,
+    visibleTask,
   } = tasksHook;
 
   const [activeId, setActiveId] = useState(null);
@@ -68,6 +70,10 @@ export const StatusPage = () => {
 
     const lastStatusId = lastStatus ? lastStatus.id : null;
 
+    if (tasks.some((task) => task.id === taskId && task.status === newStatus)) {
+      return;
+    }
+
     updateTaskState({
       id: taskId,
       status: newStatus,
@@ -86,7 +92,7 @@ export const StatusPage = () => {
 
   return (
     <div className="h-auto bg-black text-white flex flex-col">
-      <main className="container mx-auto px-4 py-8 flex-1">
+      <main className="container mx-auto px-4 py-2 flex-1">
         <div className="flex justify-end mb-4">
           <button
             onClick={handlerOpenForm}
@@ -124,6 +130,7 @@ export const StatusPage = () => {
           <TaskForm formTitle={editing ? "Update Task" : "Add New Task"} />
         </Modal>
       )}
+      {visibleTask && <TaskDetailModal />}
     </div>
   );
 };

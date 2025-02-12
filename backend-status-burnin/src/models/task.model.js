@@ -19,7 +19,9 @@ export class TaskModel {
 
     static async getStatus() {
         try {
-            const status = await Status.findAll()
+            const status = await Status.findAll({
+                order: [['id', 'DESC']]
+            })
             return status;
         } catch (error) {
             console.error('Error in TaskModel.getStatus', error);
@@ -41,14 +43,34 @@ export class TaskModel {
 
             const newTask = await Task.create(input)
 
-            //update status
-            const newStatus = await Status.create({
+            //create status Title
+            const newStatusTitle = await Status.create({
                 task_id: newTask.id,
                 date: newTask.date,
                 time: newTask.time,
                 updated_by: newTask.created_by,
+                input: `Title Created`,
+                value: `${newTask.title}`
             })
-            return { newTask, newStatus };
+            //create status Description
+            const newStatusDesc = await Status.create({
+                task_id: newTask.id,
+                date: newTask.date,
+                time: newTask.time,
+                updated_by: newTask.created_by,
+                input: `Description Created`,
+                value: `${newTask.description}`
+            })
+            //update status Status
+            const newStatusStu = await Status.create({
+                task_id: newTask.id,
+                date: newTask.date,
+                time: newTask.time,
+                updated_by: newTask.created_by,
+                input: `Status Set`,
+                value: newTask.status
+            })
+            return { newTask, newStatusTitle, newStatusDesc, newStatusStu };
         } catch (error) {
             console.error('Error in TaskModel.create', error);
             throw error;
@@ -73,18 +95,45 @@ export class TaskModel {
         const task = await Task.findByPk(id);
         if (!task) return null;
 
-        //update status
-        const newStatus = await Status.create({
-            task_id: id,
-            date: input.date,
-            time: input.time,
-            updated_by: input.updated_by,
-        })
+
+        if (input.title && task.title !== input.title) {
+            //update status
+            await Status.create({
+                task_id: id,
+                date: input.date,
+                time: input.time,
+                updated_by: input.updated_by,
+                input: 'Title Updated',
+                value: input.title
+            })
+        }
+        if (input.description && task.description !== input.description) {
+            //update status
+            await Status.create({
+                task_id: id,
+                date: input.date,
+                time: input.time,
+                updated_by: input.updated_by,
+                input: 'Description Updated',
+                value: input.description
+            })
+        }
+        if (input.status && task.status !== input.status) {
+            //update status
+            await Status.create({
+                task_id: id,
+                date: input.date,
+                time: input.time,
+                updated_by: input.updated_by,
+                input: 'Status Updated',
+                value: input.status
+            })
+        }
 
         delete input.updated_by
 
         const updatedTask = await task.update(input);
 
-        return { updatedTask, newStatus };
+        return { updatedTask };
     }
 }

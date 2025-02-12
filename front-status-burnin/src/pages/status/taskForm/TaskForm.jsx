@@ -5,8 +5,35 @@ import { AuthContext } from "../../../auth/context/AuthContext";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import Swal from "sweetalert2";
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+// Mezcla para Toast "top-end"
+export const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 1000,
+  timerProgressBar: true,
+  customClass: {
+    // Clases personalizadas que usaremos en CSS
+    popup: "ios-toast-popup",
+    title: "ios-toast-title",
+    timerProgressBar: "ios-toast-progress",
+  },
+  didOpen: (toast) => {
+    // Pausar / reanudar el timer al pasar el ratón
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  },
+  showClass: {
+    popup: "ios-toast-show",
+  },
+  hideClass: {
+    popup: "ios-toast-hide",
+  },
+});
 
 export const TaskForm = ({ formTitle }) => {
   const { login } = useContext(AuthContext);
@@ -29,19 +56,37 @@ export const TaskForm = ({ formTitle }) => {
   const onSubmit = (e) => {
     e.preventDefault();
 
+    if (!title || !description || !status) {
+      Toast.fire({
+        icon: "warning",
+        title: "All fields are required",
+      });
+      return;
+    }
     // Fecha/hora local con Day.js
     const date = dayjs().tz("America/Mexico_City");
     const formattedDate = date.format("YYYY-MM-DD");
     const formattedTime = date.format("HH:mm:ss");
 
-    const formData = {
-      ...taskForm,
-      date: formattedDate,
-      time: formattedTime,
-      created_by: login.user.name,
-    };
-
-    handlerAddTask(formData);
+    if (id === 0) {
+      const formData = {
+        ...taskForm,
+        title: title.toUpperCase(),
+        date: formattedDate,
+        time: formattedTime,
+        created_by: login.user.name,
+      };
+      handlerAddTask(formData);
+    } else if (id > 0) {
+      const formData = {
+        ...taskForm,
+        title: title.toUpperCase(),
+        date: formattedDate,
+        time: formattedTime,
+        updated_by: login.user.name,
+      };
+      handlerAddTask(formData);
+    }
   };
 
   return (
@@ -51,7 +96,6 @@ export const TaskForm = ({ formTitle }) => {
     >
       <h2 className="text-2xl font-semibold mb-6">{formTitle}</h2>
 
-      {/* Campo: Título */}
       <div className="mb-4">
         <label htmlFor="title" className="block mb-1 text-white/80">
           Title
@@ -67,7 +111,6 @@ export const TaskForm = ({ formTitle }) => {
         />
       </div>
 
-      {/* Campo: Descripción */}
       <div className="mb-4">
         <label htmlFor="description" className="block mb-1 text-white/80">
           Description
@@ -83,7 +126,6 @@ export const TaskForm = ({ formTitle }) => {
         />
       </div>
 
-      {/* Campo: Status */}
       <div className="mb-6">
         <label htmlFor="status" className="block mb-1 text-white/80">
           Status

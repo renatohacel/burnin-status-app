@@ -1,16 +1,16 @@
 import { useDraggable } from "@dnd-kit/core";
-import { Pencil } from "lucide-react";
+import { Eye, Pencil, Trash } from "lucide-react";
 import { useContext } from "react";
 import { StatusContext } from "../../context/StatusContext";
 
 export const TaskCard = ({ task, color, activeId, status }) => {
   const { tasksHook } = useContext(StatusContext);
-  const { handlerTaskSelected } = tasksHook;
+  const { handlerTaskSelected, handlerDeleteTask, handlerTaskDetail } =
+    tasksHook;
 
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: task.id,
-    });
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: task.id,
+  });
 
   const style = {
     transform: transform
@@ -38,19 +38,40 @@ export const TaskCard = ({ task, color, activeId, status }) => {
     >
       <div className="flex justify-between">
         <h3 className="font-medium text-neutral-100/90">{task.title}</h3>
-        <button
-          className="text-white/20 hover:text-white/40 cursor-pointer"
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => {
-            handlerTaskSelected({
-              title: task.title,
-              description: task.description,
-              status: task.status,
-            });
-          }}
-        >
-          <Pencil className="w-[15px] h-auto mb-[6px]" />
-        </button>
+        <div className="flex gap-2">
+          <button
+            className="text-white/20 hover:text-white/40 cursor-pointer"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={() => {
+              handlerTaskDetail({ task, status });
+            }}
+          >
+            <Eye className="w-[15px] h-auto mb-[6px]" />
+          </button>
+          <button
+            className="text-white/20 hover:text-white/40 cursor-pointer"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={() => {
+              handlerTaskSelected({
+                id: task.id,
+                title: task.title,
+                description: task.description,
+                status: task.status,
+              });
+            }}
+          >
+            <Pencil className="w-[15px] h-auto mb-[6px]" />
+          </button>
+          <button
+            className="text-white/20 hover:text-white/40 cursor-pointer"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={() => {
+              handlerDeleteTask(task.id);
+            }}
+          >
+            <Trash className="w-[15px] h-auto mb-[6px]" />
+          </button>
+        </div>
       </div>
       <p className="mt-2 text-white/60">{task.description}</p>
       <p className="mt-2 text-sm text-white/60">

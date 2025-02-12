@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { StatusProvider } from "../context/StatusProvider";
 import { StatusPage } from "../pages/status/StatusPage";
 import { Navbar } from "../components/navbar/Navbar";
+import { Footer } from "../components/template/Footer";
 
 export const StatusRoutes = () => {
   return (
@@ -15,6 +16,7 @@ export const StatusRoutes = () => {
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
+        <Footer />
       </div>
     </StatusProvider>
   );

@@ -37,3 +37,22 @@ export const createTask = async (task) => {
         return error.response
     }
 }
+
+export const deleteTask = async (id) => {
+    try {
+        const response = await axios.delete(`${BASE_URL}/${id}`, {}, { withCredentials: true })
+        return response
+    } catch (error) {
+        return error.response
+
+    }
+}
+
+export const updateTask = async (input) => {
+    try {
+        const response = await axios.patch(`${BASE_URL}/${input.id}`, input, { withCredentials: true })
+        return response;
+    } catch (error) {
+        return error.response
+    }
+}

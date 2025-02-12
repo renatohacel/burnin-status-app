@@ -20,37 +20,22 @@ export const Column = ({ column, tasks, status }) => {
           ref={setNodeRef}
           className="flex-1 min-h-0 overflow-x-hidden pr-2 custom-scrollbar space-y-2"
         >
-          {tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              color={column.color}
-              status={status.filter((st) => st.task_id === task.id)}
-            />
-          ))}
+          {tasks.map((task) => {
+            const taskStatuses = status.filter((st) => st.task_id === task.id);
+            return (
+              <TaskCard
+                key={task.id}
+                task={task}
+                color={column.color}
+                status={taskStatuses}
+              />
+            );
+          })}
         </div>
 
         <div className="mt-4 backdrop-blur-md bg-white/5 -mx-6 -mb-6 p-6 border-t border-white/10">
           <div className="flex justify-between items-center">
-            <span className="text-sm text-white/60">See Section</span>
-            <button
-              className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors hover:cursor-pointer hover:text-blue-500"
-              aria-label={`Open ${column.title}`}
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
+            <span className="text-sm text-white/60">{tasks.length} Tasks</span>
           </div>
         </div>
       </div>
