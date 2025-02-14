@@ -21,13 +21,13 @@ export const Column = ({ column, tasks, status }) => {
           className="flex-1 min-h-0 overflow-x-hidden pr-2 custom-scrollbar space-y-2"
         >
           {tasks.map((task) => {
-            const taskStatuses = status.filter((st) => st.task_id === task.id);
+            const taskStatus = status.filter((st) => st.task_id === task.id);
             return (
               <TaskCard
                 key={task.id}
                 task={task}
                 color={column.color}
-                status={taskStatuses}
+                status={taskStatus}
               />
             );
           })}

@@ -12,7 +12,6 @@ export class AuthModel {
         if (!isValidPass) return false;
 
         const { password: _, ...publicUser } = user.toJSON();
-
         return publicUser;
     }
 }

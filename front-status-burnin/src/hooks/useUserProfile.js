@@ -32,6 +32,8 @@ export const useUserProfile = () => {
     const { handlerUpdateProfile } = useContext(AuthContext);
     const [visibleUserProfile, setVisibleUserProfile] = useState(false);
     const [visibleFormProfile, setVisibleFormProfile] = useState(false);
+    const [visibleWO, setVisibleWO] = useState(false)
+
     const [errors, setErrors] = useState({});
 
     const handleEditProfile = async (input) => {
@@ -89,10 +91,21 @@ export const useUserProfile = () => {
         setErrors({})
     }
 
+    const handlerOpenWKOn = () => {
+        setVisibleWO(true)
+    }
+    const handlerCloseWKOn = () => {
+        setVisibleWO(false)
+    }
+
+
     return {
         visibleUserProfile,
         visibleFormProfile,
         errors,
+
+        visibleWO,
+
 
         handleOpenProfile,
         handleCloseProfile,
@@ -100,5 +113,8 @@ export const useUserProfile = () => {
 
         handleOpenFormProfile,
         handleCloseFormProfile,
+
+        handlerOpenWKOn,
+        handlerCloseWKOn,
     }
 }

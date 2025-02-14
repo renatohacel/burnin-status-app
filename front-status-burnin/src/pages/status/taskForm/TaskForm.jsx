@@ -56,10 +56,10 @@ export const TaskForm = ({ formTitle }) => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    if (!title || !description || !status) {
+    if (!title || !status) {
       Toast.fire({
         icon: "warning",
-        title: "All fields are required",
+        title: "Title is required",
       });
       return;
     }
@@ -137,8 +137,8 @@ export const TaskForm = ({ formTitle }) => {
           onChange={onInputChange}
           className="w-full px-4 py-2  bg-black/30 text-white border border-white/10 rounded-md backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer"
         >
-          <option value="TODO">TODO</option>
-          <option value="PROCESSING">PROCESSING</option>
+          <option value="TO DO">TO DO</option>
+          <option value="IN PROCESS">IN PROCESS</option>
           <option value="STOPPED">STOPPED</option>
           <option value="FINISHED">FINISHED</option>
         </select>

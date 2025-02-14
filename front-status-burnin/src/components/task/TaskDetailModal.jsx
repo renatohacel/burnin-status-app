@@ -110,9 +110,9 @@ export const TaskDetailModal = () => {
 
 const getStatusColor = (status) => {
   switch (status) {
-    case "TODO":
+    case "TO DO":
       return { badge: "bg-gray-700 text-gray-300", icon: "text-gray-300" };
-    case "PROCESSING":
+    case "IN PROCESS":
       return { badge: "bg-blue-700 text-blue-300", icon: "text-blue-300" };
     case "STOPPED":
       return { badge: "bg-red-700 text-red-300", icon: "text-red-300" };

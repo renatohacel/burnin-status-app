@@ -31,6 +31,10 @@ export const User = sequelize.define('user', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    area: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
     isAdmin: {
         type: DataTypes.INTEGER,
         allowNull: false,

@@ -16,6 +16,7 @@ import timezone from "dayjs/plugin/timezone";
 import { TaskDetailModal } from "../../components/task/TaskDetailModal";
 import { UserProfile } from "../user_profile/UserProfile";
 import { FormUserProfile } from "../user_profile/form/FormUserProfile";
+import { CurrentTasks } from "../user_profile/current_tasks/CurrentTasks";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -34,7 +35,12 @@ export const StatusPage = () => {
     visibleTask,
   } = tasksHook;
 
-  const { visibleUserProfile, visibleFormProfile } = profileHook;
+  const {
+    visibleUserProfile,
+    visibleFormProfile,
+    visibleWO,
+    handlerCloseWKOn,
+  } = profileHook;
 
   const [activeId, setActiveId] = useState(null);
 
@@ -61,11 +67,11 @@ export const StatusPage = () => {
     const formattedDate = date.format("YYYY-MM-DD");
     const formattedTime = date.format("HH:mm:ss");
 
-    const taskStatuses = status.filter((st) => st.task_id === taskId);
+    const taskStatus = status.filter((st) => st.task_id === taskId);
 
     const lastStatus =
-      taskStatuses.length > 0
-        ? taskStatuses.reduce((latest, current) => {
+      taskStatus.length > 0
+        ? taskStatus.reduce((latest, current) => {
             const latestDate = new Date(`${latest.date} ${latest.time}`);
             const currentDate = new Date(`${current.date} ${current.time}`);
             return currentDate > latestDate ? current : latest;
@@ -129,18 +135,25 @@ export const StatusPage = () => {
           </DndContext>
         </div>
       </main>
-      {visibleForm && (
-        <Modal>
-          <TaskForm formTitle={editing ? "Update Task" : "Add New Task"} />
-        </Modal>
-      )}
-      {visibleTask && <TaskDetailModal />}
       {visibleUserProfile && (
         <Modal>
           <UserProfile login={login} />
         </Modal>
       )}
       {visibleFormProfile && <FormUserProfile />}
+      {visibleWO && (
+        <CurrentTasks
+          tasks={tasks}
+          onClose={handlerCloseWKOn}
+          status={status}
+        />
+      )}
+      {visibleForm && (
+        <Modal>
+          <TaskForm formTitle={editing ? "Update Task" : "Add New Task"} />
+        </Modal>
+      )}
+      {visibleTask && <TaskDetailModal />}
     </div>
   );
 };

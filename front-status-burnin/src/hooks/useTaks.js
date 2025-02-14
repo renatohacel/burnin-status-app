@@ -1,15 +1,16 @@
 import { useReducer, useState } from "react"
 import { tasksReducer } from "../reducers/tasksReducer"
-import { changeStatus, createTask, deleteTask, getAllTasks, getStatus, updateTask } from "../services/tasksService";
+import { changeStatus, createTask, createWorkingOn, deleteTask, deleteWorkingOn, getAllTasks, getStatus, getWorkingOn, updateTask } from "../services/tasksService";
 import { statusReducer } from "../reducers/statusReducer";
 import Swal from "sweetalert2";
+import { workingOnReducer } from "../reducers/workingOnReducer";
 
 
 const initialTaskForm = {
     id: 0,
     title: "",
     description: "",
-    status: "TODO",
+    status: "TO DO",
 }
 
 // Mezcla para Toast "top-end"
@@ -58,6 +59,7 @@ export const ToastDeleted = Swal.mixin({
 export const useTasks = () => {
     const [tasks, dispatch] = useReducer(tasksReducer, [])
     const [status, dispatchStatus] = useReducer(statusReducer, [])
+    const [working_on, dispatchWorkingOn] = useReducer(workingOnReducer, [])
     const [taskSelected, setTaskSelected] = useState(initialTaskForm)
     const [statusSelected, setStatusSelected] = useState([])
     const [visibleForm, setVisibleForm] = useState(false);
@@ -85,6 +87,18 @@ export const useTasks = () => {
             })
         } catch (error) {
             console.error('Error fetching status:', error)
+        }
+    }
+
+    const getWorkingOnTasks = async () => {
+        try {
+            const response = await getWorkingOn();
+            dispatchWorkingOn({
+                type: 'loadWorking',
+                payload: response.data
+            })
+        } catch (error) {
+            console.error('Error fetching working_on:', error)
         }
     }
 
@@ -116,92 +130,128 @@ export const useTasks = () => {
         }
     }
 
+    const handlerAddWorkingOn = async (input) => {
+        try {
+            const response = await createWorkingOn(input);
+            const task = tasks.filter(task => task.id === input.task_id)
+            if (response.status === 201) {
+                Toast.fire({
+                    icon: "info",
+                    title: `You are working on ${task[0].title} now`
+                })
+                dispatchWorkingOn({
+                    type: 'addWorking',
+                    payload: response.data.result,
+                });
+            } else if (response.status === 409) {
+                Toast.fire({
+                    icon: "warning",
+                    title: 'You are already working on this'
+                })
+            }
+        } catch (error) {
+            console.error('Error add working on:', error)
+        }
+    }
+
 
     const handlerAddTask = async (task) => {
         const { id } = task
-        const response = id === 0
-            ? await createTask(task)
-            : await updateTask(task)
 
-        if (response.status === 201) {
-            dispatch({
-                type: (id === 0) ? 'addTask' : 'updateTask',
-                payload: (id === 0) ? response.data.result.newTask : response.data.result.updatedTask,
-            })
-            if (id === 0) {
-                dispatchStatus({
-                    type: 'addStatus',
-                    payload: response.data.result.newStatusTitle
-                })
-                dispatchStatus({
-                    type: 'addStatus',
-                    payload: response.data.result.newStatusDesc
-                })
-                dispatchStatus({
-                    type: 'addStatus',
-                    payload: response.data.result.newStatusStu
-                })
-            } else if (id > 0) {
-                const oldTask = tasks.find((t) => t.id === id);
-                if (task.title !== oldTask.title) {
-                    dispatchStatus({
-                        type: 'addStatus',
-                        payload: {
-                            task_id: task.id,
-                            date: task.date,
-                            time: task.time,
-                            updated_by: task.updated_by,
-                            input: 'Title Updated To',
-                            value: task.title
-                        }
-                    })
-                }
-                if (task.description !== oldTask.description) {
-                    dispatchStatus({
-                        type: 'addStatus',
-                        payload: {
-                            task_id: task.id,
-                            date: task.date,
-                            time: task.time,
-                            updated_by: task.updated_by,
-                            input: 'Description Updated To',
-                            value: task.description
-                        }
-                    })
-                }
-                if (task.status !== oldTask.status) {
-                    dispatchStatus({
-                        type: 'addStatus',
-                        payload: {
-                            task_id: task.id,
-                            date: task.date,
-                            time: task.time,
-                            updated_by: task.updated_by,
-                            input: 'Status Updated To',
-                            value: task.status
-                        }
-                    })
-                }
+        try {
+            const response = id === 0
+                ? await createTask(task)
+                : await updateTask(task)
 
-            }
-            if (id !== 0) {
-                handlerCloseForm();
-                Toast.fire({
-                    icon: "success",
-                    title: 'Task updated successfully'
+            if (response.status === 201) {
+                dispatch({
+                    type: (id === 0) ? 'addTask' : 'updateTask',
+                    payload: (id === 0) ? response.data.result.newTask : response.data.result.updatedTask,
                 })
+                if (id === 0) {
+                    dispatchStatus({
+                        type: 'addStatus',
+                        payload: response.data.result.newStatusTitle
+                    })
+                    dispatchStatus({
+                        type: 'addStatus',
+                        payload: response.data.result.newStatusStu
+                    })
+                    if (response.data.result.newStatusDesc) {
+                        dispatchStatus({
+                            type: 'addStatus',
+                            payload: response.data.result.newStatusDesc
+                        })
+                    }
+                } else if (id > 0) {
+                    const oldTask = tasks.find((t) => t.id === id);
+                    if (task.title !== oldTask.title) {
+                        dispatchStatus({
+                            type: 'addStatus',
+                            payload: {
+                                task_id: task.id,
+                                date: task.date,
+                                time: task.time,
+                                updated_by: task.updated_by,
+                                input: 'Title Updated To',
+                                value: task.title
+                            }
+                        })
+                    }
+                    if (task.description !== oldTask.description) {
+                        dispatchStatus({
+                            type: 'addStatus',
+                            payload: {
+                                task_id: task.id,
+                                date: task.date,
+                                time: task.time,
+                                updated_by: task.updated_by,
+                                input: 'Description Updated To',
+                                value: task.description
+                            }
+                        })
+                    }
+                    if (task.status !== oldTask.status) {
+                        dispatchStatus({
+                            type: 'addStatus',
+                            payload: {
+                                task_id: task.id,
+                                date: task.date,
+                                time: task.time,
+                                updated_by: task.updated_by,
+                                input: 'Status Updated To',
+                                value: task.status
+                            }
+                        })
+                    }
+                }
+                if (id !== 0) {
+                    handlerCloseForm();
+                    Toast.fire({
+                        icon: "success",
+                        title: 'Task updated successfully'
+                    })
+                } else {
+                    handlerCloseForm();
+                    Toast.fire({
+                        icon: "success",
+                        title: 'Task created successfully'
+                    })
+                }
+            } else if (response.status === 409) {
+                ToastDeleted.fire({
+                    icon: "warning",
+                    title: "Employee not found",
+                    text: "Employee does not register",
+                });
             } else {
-                handlerCloseForm();
-                Toast.fire({
-                    icon: "success",
-                    title: 'Task created successfully'
-                })
+                throw new Error('Unknow error');
             }
-        } else if (response.status === 409) {
-            ToastDeleted.fire({
-                icon: "warning",
-                title: "Employee not found",
-                text: "Employee does not register",
+        } catch (error) {
+            console.error('Error in handlerAddTask', error);
+            Toast.fire({
+                icon: "error",
+                title: "Error to register task",
             });
         }
     }
@@ -227,6 +277,22 @@ export const useTasks = () => {
                 });
             }
         });
+    }
+
+    const handlerDeleteWorkingOn = async (id) => {
+        const works = working_on.filter((wkon => wkon.id === id))
+        const task = tasks.filter(task => task.id === works[0].task_id)
+
+        await deleteWorkingOn(id)
+        dispatchWorkingOn({
+            type: 'deleteWorking',
+            payload: id
+        })
+        Toast.fire({
+            icon: "info",
+            title: `You are no longer working on ${task[0].title}`
+        });
+
     }
 
     const handlerOpenForm = () => {
@@ -257,7 +323,6 @@ export const useTasks = () => {
         setStatusSelected([]);
     }
 
-
     return {
         tasks,
         status,
@@ -267,6 +332,7 @@ export const useTasks = () => {
         editing,
         visibleTask,
         statusSelected,
+        working_on,
 
         handlerOpenForm,
         handlerCloseForm,
@@ -278,5 +344,10 @@ export const useTasks = () => {
         handlerDeleteTask,
         handlerTaskDetail,
         handlerCloseTaskDetail,
+        dispatchWorkingOn,
+        getWorkingOnTasks,
+        handlerAddWorkingOn,
+        handlerDeleteWorkingOn,
+
     }
 }

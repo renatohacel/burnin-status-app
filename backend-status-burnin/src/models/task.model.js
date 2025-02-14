@@ -1,6 +1,7 @@
 import { Status } from "../schemas/status.schema.js";
 import { Task } from "../schemas/task.schema.js";
 import { User } from "../schemas/user.schema.js";
+import { WorkingOn } from "../schemas/working_on.schema.js";
 
 
 
@@ -29,6 +30,17 @@ export class TaskModel {
         }
     }
 
+    static async getWorkingOn() {
+        try {
+            const workin_on = await WorkingOn.findAll({
+                order: [['id', 'DESC']]
+            })
+            return workin_on;
+        } catch (error) {
+
+        }
+    }
+
     static async create({ input }) {
         try {
             const user_exists = await User.findOne({
@@ -52,15 +64,6 @@ export class TaskModel {
                 input: `Title Created`,
                 value: `${newTask.title}`
             })
-            //create status Description
-            const newStatusDesc = await Status.create({
-                task_id: newTask.id,
-                date: newTask.date,
-                time: newTask.time,
-                updated_by: newTask.created_by,
-                input: `Description Created`,
-                value: `${newTask.description}`
-            })
             //update status Status
             const newStatusStu = await Status.create({
                 task_id: newTask.id,
@@ -70,9 +73,52 @@ export class TaskModel {
                 input: `Status Set`,
                 value: newTask.status
             })
-            return { newTask, newStatusTitle, newStatusDesc, newStatusStu };
+            if (input.description) {
+                //create status Description
+                const newStatusDesc = await Status.create({
+                    task_id: newTask.id,
+                    date: newTask.date,
+                    time: newTask.time,
+                    updated_by: newTask.created_by,
+                    input: `Description Created`,
+                    value: `${newTask.description}`
+                })
+                return { newTask, newStatusTitle, newStatusDesc, newStatusStu };
+            }
+            return { newTask, newStatusTitle, newStatusStu };
+
         } catch (error) {
             console.error('Error in TaskModel.create', error);
+            throw error;
+        }
+    }
+
+    static async create_working_on({ input }) {
+        try {
+            const working_on_exists = await WorkingOn.findOne({
+                where: { task_id: input.task_id }
+            })
+            if (working_on_exists?.user_id === input.user_id) {
+                return false;
+            }
+
+            const newWorkingOn = await WorkingOn.create(input)
+            return newWorkingOn;
+
+        } catch (error) {
+            console.error('Error in TaskModel.create_working_on', error);
+            throw error;
+        }
+    }
+    static async delete_working_on({ id }) {
+        try {
+            const working_on = await WorkingOn.findByPk(id)
+            if (!working_on) return false
+
+            await working_on.destroy()
+            return true
+        } catch (error) {
+            console.error('Error in TaskModel.delete_working_on', error);
             throw error;
         }
     }
@@ -87,6 +133,9 @@ export class TaskModel {
             })
 
             await task.destroy();
+            await WorkingOn.destroy({
+                where: { task_id: id }
+            })
 
             return true;
         } catch (error) {

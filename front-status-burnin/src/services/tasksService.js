@@ -20,6 +20,15 @@ export const getStatus = async () => {
     }
 }
 
+export const getWorkingOn = async () => {
+    try {
+        const response = await axios.get(`${BASE_URL}/working_on`, {}, { withCredentials: true })
+        return response;
+    } catch (error) {
+
+    }
+}
+
 export const changeStatus = async (task) => {
     try {
         const response = await axios.patch(`${BASE_URL}/${task.id}`, { status: task.status, date: task.date, time: task.time, updated_by: task.updated_by }, { withCredentials: true })
@@ -38,13 +47,30 @@ export const createTask = async (task) => {
     }
 }
 
+export const createWorkingOn = async (input) => {
+    try {
+        const response = await axios.post(`${BASE_URL}/working_on`, input, { withCredentials: true })
+        return response;
+    } catch (error) {
+        return error.response
+    }
+}
+
 export const deleteTask = async (id) => {
     try {
         const response = await axios.delete(`${BASE_URL}/${id}`, {}, { withCredentials: true })
         return response
     } catch (error) {
         return error.response
+    }
+}
 
+export const deleteWorkingOn = async (id) => {
+    try {
+        const response = await axios.delete(`${BASE_URL}/working_on/${id}`, {}, { withCredentials: true })
+        return response
+    } catch (error) {
+        return error.response
     }
 }
 

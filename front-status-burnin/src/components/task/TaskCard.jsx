@@ -1,12 +1,25 @@
 import { useDraggable } from "@dnd-kit/core";
-import { Eye, Pencil, Trash } from "lucide-react";
-import { useContext } from "react";
+import { Eye, Pencil, Pin, PinOff, Trash } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
 import { StatusContext } from "../../context/StatusContext";
+import { AuthContext } from "../../auth/context/AuthContext";
 
 export const TaskCard = ({ task, color, activeId, status }) => {
+  const { login } = useContext(AuthContext);
   const { tasksHook } = useContext(StatusContext);
-  const { handlerTaskSelected, handlerDeleteTask, handlerTaskDetail } =
-    tasksHook;
+  const {
+    handlerTaskSelected,
+    handlerDeleteTask,
+    handlerTaskDetail,
+    handlerAddWorkingOn,
+    handlerDeleteWorkingOn,
+    getWorkingOnTasks,
+    working_on,
+  } = tasksHook;
+
+  useEffect(() => {
+    getWorkingOnTasks();
+  }, []);
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: task.id,
@@ -28,17 +41,52 @@ export const TaskCard = ({ task, color, activeId, status }) => {
         })
       : null;
 
+  const onAddWorkTask = () => {
+    if (
+      !working_on.some(
+        (wkon) => wkon.task_id === task.id && wkon.user_id === login.user.id
+      )
+    ) {
+      handlerAddWorkingOn({ task_id: task.id, user_id: login.user.id });
+    } else {
+      const current_working_on = working_on.filter(
+        (wkon) => wkon.task_id === task.id && wkon.user_id === login.user.id
+      );
+      handlerDeleteWorkingOn(current_working_on[0].id);
+    }
+  };
+
+  const shouldShowPulse = working_on.some(
+    (wkon) => wkon.task_id === task.id && wkon.user_id === login.user.id
+  );
+
   return (
     <div
-      className={`cursor-grab rounded-3xl bg-gradient-to-br ${color} p-4 shadow-sm`}
+      className={`cursor-grab rounded-3xl bg-gradient-to-br ${color} p-4 shadow-sm relative`}
       style={style}
       ref={setNodeRef}
       {...listeners}
       {...attributes}
     >
+      {shouldShowPulse && (
+        <div className="absolute top-0 right-0 transform translate-x-1/10 -translate-y-1/100 w-3 h-3 bg-amber-500 rounded-full pulse"></div>
+      )}
       <div className="flex justify-between">
         <h3 className="font-medium text-neutral-100/90">{task.title}</h3>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-start">
+          <button
+            className="text-white/20 hover:text-white/40 cursor-pointer"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={() => {
+              onAddWorkTask();
+            }}
+          >
+            {shouldShowPulse ? (
+              <PinOff className="w-[15px] h-auto mb-[6px]" />
+            ) : (
+              <Pin className="w-[15px] h-auto mb-[6px]" />
+            )}
+          </button>
           <button
             className="text-white/20 hover:text-white/40 cursor-pointer"
             onPointerDown={(e) => e.stopPropagation()}

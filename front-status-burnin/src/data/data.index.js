@@ -1,12 +1,12 @@
 export const COLUMNS = [
     {
         id: 1,
-        title: "TODO",
+        title: "TO DO",
         color: "from-gray-900/80 to-gray-800/50",
     },
     {
         id: 2,
-        title: "PROCESSING",
+        title: "IN PROCESS",
         color: "from-blue-900/80 to-blue-800/50",
     },
 
