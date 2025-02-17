@@ -338,20 +338,35 @@ export const useTasks = () => {
             text: "Please wait a moment",
         });
         setTimeout(async () => {
-            const response = await generateLog(user)
-            if (response.status === 200) {
+            try {
+                const response = await generateLog(user);
+                if (response.status === 200) {
+                    ToastSuccess.fire({
+                        icon: "success",
+                        title: "Activity Log Generated!",
+                        text: "The activity log was generated successfully",
+                    });
+                } else if (response.status === 409) {
+                    ToastSuccess.fire({
+                        icon: "warning",
+                        title: "Not Allowed",
+                        text: response.data.message,
+                    });
+                    console.error(response.data.message);
+                } else {
+                    ToastSuccess.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "An error occurred while generating the activity log",
+                    });
+                }
+            } catch (error) {
+                console.error("Error in handlerGenerateLog:", error);
                 ToastSuccess.fire({
-                    icon: "success",
-                    title: "Activty Log Generated!",
-                    text: "The activity log generated successfully",
+                    icon: "error",
+                    title: "Unexpected Error",
+                    text: "An unexpected error occurred. Please try again later.",
                 });
-            } else if (response.status === 409) {
-                ToastSuccess.fire({
-                    icon: "warning",
-                    title: "Not Allowed",
-                    text: "You are not allowed to alter the activity log outside of your work hours",
-                });
-                console.error(response.data.message)
             }
         }, 1000);
     }

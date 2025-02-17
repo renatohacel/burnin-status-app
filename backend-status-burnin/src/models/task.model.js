@@ -206,7 +206,6 @@ export class TaskModel {
 
     static async generate_activity_log({ input }) {
         try {
-            // Fecha/hora local con Day.js
             const date = dayjs().tz("America/Mexico_City");
             const formattedDate = date.format("YYYY-MM-DD");
             const formattedTime = date.format("HH:mm:ss");
@@ -260,49 +259,47 @@ export class TaskModel {
                 return acc;
             }, {});
 
-            // Crear el archivo Excel
             const workbook = new ExcelJS.Workbook();
             const sheetName = `Shift ${shift} - ${formattedDate}`;
 
-            // Determinar el nombre del archivo según el área
             const fileName = input.area === 'Burnin'
                 ? `Burnin Shift Activities.xlsx`
                 : input.area === 'BC'
                     ? `BC Shift Activities.xlsx`
                     : `Unknown Area Shift Activities.xlsx`;
 
-            // Crear una nueva hoja
             const sheet = workbook.addWorksheet(sheetName);
 
-            // Añadir encabezados con estilos
             sheet.addRow(['Date', 'Shift', 'Activities', 'Description', 'Engineer']);
             const headerRow = sheet.getRow(1);
             headerRow.eachCell((cell) => {
                 cell.fill = {
                     type: 'pattern',
                     pattern: 'solid',
-                    fgColor: { argb: 'FF0070C0' } // Color azul
+                    fgColor: { argb: 'FF0070C0' }
                 };
                 cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
                 cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
                 cell.alignment = { vertical: 'middle', horizontal: 'center' };
             });
-
-            // Añadir datos con estilos
             await Promise.all(tasks.map(async (task) => {
                 const workingOnUsers = await Promise.all(taskUserMap[task.id]?.map(async (user_id) => {
                     const user = await User.findByPk(user_id);
-                    return user.dataValues.name;
+                    if (user.dataValues.shift === shift) {
+                        return user.dataValues.name;
+                    }
+                    return null;
                 }) || []);
 
-                const row = sheet.addRow([formattedDate, shift, task.title, task.description, workingOnUsers.join(', ')]);
+                const validUsers = workingOnUsers.filter(name => name !== null);
+
+                const row = sheet.addRow([formattedDate, shift, task.title, task.description, validUsers.join(', ')]);
                 row.eachCell((cell) => {
                     cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
-                    cell.alignment = { vertical: 'top', wrapText: true }; // Habilitar ajuste de texto
+                    cell.alignment = { vertical: 'top', wrapText: true };
                 });
             }));
 
-            // Ajustar el ancho de las columnas para que el contenido sea visible
             sheet.columns = [
                 { key: 'date', width: 15 },
                 { key: 'shift', width: 10 },
@@ -311,25 +308,7 @@ export class TaskModel {
                 { key: 'engineer', width: 30 }
             ];
 
-            // Guardar el archivo Excel
             await workbook.xlsx.writeFile(fileName);
-
-            console.log('DATE: ', formattedDate);
-            console.log('SHIFT: ', shift);
-            console.log('AREA: ', input.area);
-            console.log('TASKS OF DAY:');
-            console.log('------------------------------');
-            await Promise.all(tasks.map(async (task) => {
-                const workingOnUsers = await Promise.all(taskUserMap[task.id]?.map(async (user_id) => {
-                    const user = await User.findByPk(user_id);
-                    return user.dataValues.name;
-                }) || []);
-
-                console.log('TITLE: ', task.title);
-                console.log('DESCRIPTION: ', task.description);
-                console.log('WORKING ON: ', workingOnUsers);
-                console.log('------------------------------');
-            }));
 
             return true;
         } catch (error) {

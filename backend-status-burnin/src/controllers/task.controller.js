@@ -104,8 +104,11 @@ export class TaskController {
 
             return res.status(200).send({ message: 'activity log generated successfully' })
         } catch (error) {
-            console.log(error)
-            return res.status(500).send({ message: 'Server error' })
+            console.log(error);
+            if (error.code === 'EBUSY') {
+                return res.status(409).send({ message: 'The file is currently in use. Please close it and try again.' });
+            }
+            return res.status(500).send({ message: 'Server error' });
         }
     }
 }
