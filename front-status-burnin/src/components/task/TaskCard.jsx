@@ -105,6 +105,7 @@ export const TaskCard = ({ task, color, activeId, status }) => {
                 title: task.title,
                 description: task.description,
                 status: task.status,
+                area: task.area,
               });
             }}
           >
@@ -121,8 +122,9 @@ export const TaskCard = ({ task, color, activeId, status }) => {
           </button>
         </div>
       </div>
+      <p className="text-xs text-white/60">{task.area}</p>
       <p className="mt-2 text-white/60">{task.description}</p>
-      <p className="mt-2 text-sm text-white/60">
+      <p className="mt-2 text-xs text-white/60">
         Last change at:{" "}
         {lastStatus
           ? `${lastStatus.date} / ${lastStatus.time}hrs`

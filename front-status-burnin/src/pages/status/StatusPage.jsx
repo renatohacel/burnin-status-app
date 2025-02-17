@@ -4,7 +4,7 @@ import { COLUMNS } from "../../data/data.index";
 import { StatusContext } from "../../context/StatusContext";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { TaskCard } from "../../components/task/TaskCard";
-import { Plus } from "lucide-react";
+import { FilePlus, Plus } from "lucide-react";
 
 import { AuthContext } from "../../auth/context/AuthContext";
 import { Modal } from "../../components/modal/Modal";
@@ -33,6 +33,7 @@ export const StatusPage = () => {
     handlerOpenForm,
     editing,
     visibleTask,
+    handlerGenerateLog,
   } = tasksHook;
 
   const {
@@ -103,7 +104,13 @@ export const StatusPage = () => {
   return (
     <div className="h-auto bg-black text-white flex flex-col">
       <main className="container mx-auto px-4 py-2 flex-1">
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end mb-4 gap-4">
+          <button
+            className="w-52 hover:text-blue-500 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-sm font-semibold hover:cursor-pointer text-nowrap"
+            onClick={() => handlerGenerateLog(login.user)}
+          >
+            GENERATE ACTIVITY LOG <FilePlus className="ml-1 w-5 mb-[2px]" />
+          </button>
           <button
             onClick={handlerOpenForm}
             className="w-28 hover:text-blue-500 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-sm font-semibold hover:cursor-pointer text-nowrap"

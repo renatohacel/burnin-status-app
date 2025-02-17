@@ -11,7 +11,7 @@ export const TaskDetailModal = () => {
     handlerCloseTaskDetail,
     getTaskStatus,
   } = tasksHook;
-  const { title, description, status, date, time } = taskSelected;
+  const { title, description, status, date, time, area } = taskSelected;
   const [statusSelected, setStatusSelected] = useState([]);
 
   useEffect(() => {
@@ -52,7 +52,9 @@ export const TaskDetailModal = () => {
         </div>
 
         {/* Título */}
-        <h2 className="text-xl font-semibold text-center mb-2">{title}</h2>
+        <h2 className="text-xl font-semibold text-center">{title}</h2>
+        {/* Area */}
+        <div className="text-xs text-white/70 text-center mb-3">{area}</div>
 
         {/* Estado (badge) */}
         <div

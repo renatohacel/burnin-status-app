@@ -28,3 +28,6 @@ tasksRouter.delete('/working_on/:id', TaskController.delete_working_on);
 
 //update task
 tasksRouter.patch('/:id', TaskController.update);
+
+//generate activity log
+tasksRouter.post('/generate_activity_log', TaskController.generate_activity_log);

@@ -1,6 +1,6 @@
 import { useReducer, useState } from "react"
 import { tasksReducer } from "../reducers/tasksReducer"
-import { changeStatus, createTask, createWorkingOn, deleteTask, deleteWorkingOn, getAllTasks, getStatus, getWorkingOn, updateTask } from "../services/tasksService";
+import { changeStatus, createTask, createWorkingOn, deleteTask, deleteWorkingOn, generateLog, getAllTasks, getStatus, getWorkingOn, updateTask } from "../services/tasksService";
 import { statusReducer } from "../reducers/statusReducer";
 import Swal from "sweetalert2";
 import { workingOnReducer } from "../reducers/workingOnReducer";
@@ -11,6 +11,7 @@ const initialTaskForm = {
     title: "",
     description: "",
     status: "TO DO",
+    area: ''
 }
 
 // Mezcla para Toast "top-end"
@@ -21,13 +22,11 @@ export const Toast = Swal.mixin({
     timer: 1000,
     timerProgressBar: true,
     customClass: {
-        // Clases personalizadas que usaremos en CSS
         popup: "ios-toast-popup",
         title: "ios-toast-title",
         timerProgressBar: "ios-toast-progress",
     },
     didOpen: (toast) => {
-        // Pausar / reanudar el timer al pasar el ratón
         toast.onmouseenter = Swal.stopTimer;
         toast.onmouseleave = Swal.resumeTimer;
     },
@@ -44,6 +43,45 @@ export const ToastDeleted = Swal.mixin({
     toast: true,
     position: "center",
     showConfirmButton: false,
+    customClass: {
+        popup: "ios-toast-popup",
+        title: "ios-toast-title",
+    },
+    showClass: {
+        popup: "ios-toast-show",
+    },
+    hideClass: {
+        popup: "ios-toast-hide",
+    },
+});
+
+// Mixin para el loading (espera)
+export const ToastLoading = Swal.mixin({
+    toast: true,
+    position: "center",
+    showConfirmButton: false,
+    allowEscapeKey: false,
+    didOpen: () => {
+        Swal.showLoading();
+    },
+    customClass: {
+        popup: "ios-toast-popup",
+        title: "ios-toast-title",
+    },
+    showClass: {
+        popup: "ios-toast-show",
+    },
+    hideClass: {
+        popup: "ios-toast-hide",
+    },
+});
+
+// Mixin para el success después de la espera
+export const ToastSuccess = Swal.mixin({
+    toast: true,
+    position: "center",
+    showConfirmButton: false,
+    timer: 2000,
     customClass: {
         popup: "ios-toast-popup",
         title: "ios-toast-title",
@@ -292,7 +330,30 @@ export const useTasks = () => {
             icon: "info",
             title: `You are no longer working on ${task[0].title}`
         });
+    }
 
+    const handlerGenerateLog = async (user) => {
+        ToastLoading.fire({
+            title: "Generating activity log...",
+            text: "Please wait a moment",
+        });
+        setTimeout(async () => {
+            const response = await generateLog(user)
+            if (response.status === 200) {
+                ToastSuccess.fire({
+                    icon: "success",
+                    title: "Activty Log Generated!",
+                    text: "The activity log generated successfully",
+                });
+            } else if (response.status === 409) {
+                ToastSuccess.fire({
+                    icon: "warning",
+                    title: "Not Allowed",
+                    text: "You are not allowed to alter the activity log outside of your work hours",
+                });
+                console.error(response.data.message)
+            }
+        }, 1000);
     }
 
     const handlerOpenForm = () => {
@@ -348,6 +409,7 @@ export const useTasks = () => {
         getWorkingOnTasks,
         handlerAddWorkingOn,
         handlerDeleteWorkingOn,
+        handlerGenerateLog,
 
     }
 }

@@ -42,7 +42,7 @@ export const TaskForm = ({ formTitle }) => {
 
   const [taskForm, setTaskForm] = useState(initialTaskForm);
 
-  const { id, title, description, status } = taskForm;
+  const { id, title, description, status, area } = taskForm;
 
   useEffect(() => {
     setTaskForm({ ...taskSelected });
@@ -141,6 +141,22 @@ export const TaskForm = ({ formTitle }) => {
           <option value="IN PROCESS">IN PROCESS</option>
           <option value="STOPPED">STOPPED</option>
           <option value="FINISHED">FINISHED</option>
+        </select>
+      </div>
+
+      <div className="mb-6">
+        <label htmlFor="status" className="block mb-1 text-white/80">
+          Area
+        </label>
+        <select
+          id="area"
+          name="area"
+          value={area}
+          onChange={onInputChange}
+          className="w-full px-4 py-2  bg-black/30 text-white border border-white/10 rounded-md backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer"
+        >
+          <option value="Burnin">Burnin</option>
+          <option value="BC">BC</option>
         </select>
       </div>
 

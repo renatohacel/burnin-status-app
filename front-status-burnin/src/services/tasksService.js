@@ -82,3 +82,12 @@ export const updateTask = async (input) => {
         return error.response
     }
 }
+
+export const generateLog = async (input) => {
+    try {
+        const response = await axios.post(`${BASE_URL}/generate_activity_log`, input, { withCredentials: true })
+        return response;
+    } catch (error) {
+        return error.response
+    }
+}
