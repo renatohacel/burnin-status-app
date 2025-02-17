@@ -232,13 +232,13 @@ export class TaskModel {
 
             const all_tasks = await Promise.all(tasks_ids.map(async (task_id) => {
                 const task = await Task.findByPk(task_id);
-                if (task.dataValues.area === input.area) {
+                if (task && task.dataValues.area === input.area) {
                     return task;
                 }
-                return;
+                return null;
             }));
 
-            const tasks = all_tasks.filter((task) => task !== undefined);
+            const tasks = all_tasks.filter((task) => task !== null);
 
             const all_eng = await Promise.all(tasks_ids.map(async (task_id) => {
                 const wkOn = await WorkingOn.findAll({
@@ -282,10 +282,11 @@ export class TaskModel {
                 cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
                 cell.alignment = { vertical: 'middle', horizontal: 'center' };
             });
+
             await Promise.all(tasks.map(async (task) => {
                 const workingOnUsers = await Promise.all(taskUserMap[task.id]?.map(async (user_id) => {
                     const user = await User.findByPk(user_id);
-                    if (user.dataValues.shift === shift) {
+                    if (user && user.dataValues.shift === shift) {
                         return user.dataValues.name;
                     }
                     return null;

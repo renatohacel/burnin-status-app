@@ -26,6 +26,10 @@ const userSchema = z.object({
         required_error: 'Shift is required'
     }).min(1, { message: 'The minimum shift is 1' }).max(3, { message: 'The maximun shift is 3' }),
 
+    area: z.string({
+        invalid_type_error: 'Area must be a string',
+    }),
+
     isAdmin: z.number({
         invalid_type_error: 'The type user must be 1 or 0'
     })

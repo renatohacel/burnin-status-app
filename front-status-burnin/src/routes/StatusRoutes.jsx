@@ -3,6 +3,7 @@ import { StatusProvider } from "../context/StatusProvider";
 import { StatusPage } from "../pages/status/StatusPage";
 import { Navbar } from "../components/navbar/Navbar";
 import { Footer } from "../components/template/Footer";
+import { UsersPage } from "../pages/users/UsersPage";
 
 export const StatusRoutes = () => {
   return (
@@ -13,6 +14,7 @@ export const StatusRoutes = () => {
           <Routes>
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="home" element={<StatusPage />} />
+            <Route path="users-manage" element={<UsersPage />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>

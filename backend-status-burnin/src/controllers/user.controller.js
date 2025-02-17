@@ -10,8 +10,10 @@ export class UserController {
     }
 
     static async create(req, res) {
+
         // validate user data
         const input = validateUser(req.body);
+
 
         if (input.error) {
             return res.status(400).json({ error: JSON.parse(input.error.message) });

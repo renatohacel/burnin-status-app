@@ -142,3 +142,27 @@
         transform: scale(1);
     }
 }
+
+.input-field {
+    width: 100%;
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s ease-in-out;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: rgba(59, 130, 246, 1);
+    /* focus:ring-blue-500 */
+}
+
+.error-text {
+    font-size: 0.9rem;
+    color: rgba(255, 76, 76, 0.9);
+    font-style: italic;
+    margin-top: 2px;
+}

@@ -126,7 +126,7 @@ export const TaskForm = ({ formTitle }) => {
         />
       </div>
 
-      <div className="mb-6">
+      <div className="mb-4">
         <label htmlFor="status" className="block mb-1 text-white/80">
           Status
         </label>

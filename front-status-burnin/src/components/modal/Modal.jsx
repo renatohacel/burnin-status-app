@@ -4,7 +4,7 @@ import { StatusContext } from "../../context/StatusContext";
 export const Modal = ({ children }) => {
   const { tasksHook, profileHook } = useContext(StatusContext);
   const { handlerCloseForm } = tasksHook;
-  const { handleCloseProfile, handleCloseFormProfile } = profileHook;
+  const { handleCloseProfile } = profileHook;
 
   return (
     <div

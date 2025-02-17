@@ -1,28 +1,24 @@
 import { useContext, useEffect, useState } from "react";
+// Con plugin para zona horaria
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+dayjs.extend(utc);
+dayjs.extend(timezone);
 import { Column } from "../../components/column/Column";
 import { COLUMNS } from "../../data/data.index";
 import { StatusContext } from "../../context/StatusContext";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { TaskCard } from "../../components/task/TaskCard";
 import { FilePlus, Plus } from "lucide-react";
-
 import { AuthContext } from "../../auth/context/AuthContext";
 import { Modal } from "../../components/modal/Modal";
 import { TaskForm } from "./taskForm/TaskForm";
-// Con plugin para zona horaria
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import timezone from "dayjs/plugin/timezone";
 import { TaskDetailModal } from "../../components/task/TaskDetailModal";
-import { UserProfile } from "../user_profile/UserProfile";
-import { FormUserProfile } from "../user_profile/form/FormUserProfile";
-import { CurrentTasks } from "../user_profile/current_tasks/CurrentTasks";
-dayjs.extend(utc);
-dayjs.extend(timezone);
 
 export const StatusPage = () => {
   const { login } = useContext(AuthContext);
-  const { tasksHook, profileHook } = useContext(StatusContext);
+  const { tasksHook } = useContext(StatusContext);
   const {
     tasks,
     status,
@@ -35,13 +31,6 @@ export const StatusPage = () => {
     visibleTask,
     handlerGenerateLog,
   } = tasksHook;
-
-  const {
-    visibleUserProfile,
-    visibleFormProfile,
-    visibleWO,
-    handlerCloseWKOn,
-  } = profileHook;
 
   const [activeId, setActiveId] = useState(null);
 
@@ -142,19 +131,6 @@ export const StatusPage = () => {
           </DndContext>
         </div>
       </main>
-      {visibleUserProfile && (
-        <Modal>
-          <UserProfile login={login} />
-        </Modal>
-      )}
-      {visibleFormProfile && <FormUserProfile />}
-      {visibleWO && (
-        <CurrentTasks
-          tasks={tasks}
-          onClose={handlerCloseWKOn}
-          status={status}
-        />
-      )}
       {visibleForm && (
         <Modal>
           <TaskForm formTitle={editing ? "Update Task" : "Add New Task"} />

@@ -310,7 +310,7 @@ export const useTasks = () => {
                     payload: id
                 })
                 Toast.fire({
-                    title: "Tasks deleted successfully",
+                    title: "Task deleted successfully",
                     icon: "success"
                 });
             }
