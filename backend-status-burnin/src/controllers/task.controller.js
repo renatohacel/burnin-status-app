@@ -33,6 +33,26 @@ export class TaskController {
         }
     }
 
+    static async getBurninActivityLog(req, res) {
+        try {
+            const burnin_activity_log = await TaskModel.getBurninActivityLog();
+            return res.status(200).send(burnin_activity_log);
+        } catch (error) {
+            console.error('Error in TaskController.getBurninActivityLog', error);
+            throw error;
+        }
+    }
+
+    static async getBCActivityLog(req, res) {
+        try {
+            const bc_activity_log = await TaskModel.getBCActivityLog();
+            return res.status(200).send(bc_activity_log);
+        } catch (error) {
+            console.error('Error in TaskController.getBCActivityLog', error);
+            throw error;
+        }
+    }
+
     static async create(req, res) {
         try {
             const result = await TaskModel.create({ input: req.body });

@@ -4,6 +4,7 @@ import { StatusPage } from "../pages/status/StatusPage";
 import { Navbar } from "../components/navbar/Navbar";
 import { Footer } from "../components/template/Footer";
 import { UsersPage } from "../pages/users/UsersPage";
+import { ActivityLogsPage } from "../pages/activity_logs/ActivityLogsPage";
 
 export const StatusRoutes = () => {
   return (
@@ -15,6 +16,7 @@ export const StatusRoutes = () => {
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="home" element={<StatusPage />} />
             <Route path="users-manage" element={<UsersPage />} />
+            <Route path="activity-logs" element={<ActivityLogsPage />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>

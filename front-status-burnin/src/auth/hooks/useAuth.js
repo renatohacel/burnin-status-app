@@ -9,15 +9,26 @@ const initialLogin = JSON.parse(sessionStorage.getItem("login")) || {
     user: undefined,
 };
 
-const Toast = Swal.mixin({
+export const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 2000,
+    timer: 1000,
     timerProgressBar: true,
+    customClass: {
+        popup: "ios-toast-popup",
+        title: "ios-toast-title",
+        timerProgressBar: "ios-toast-progress",
+    },
     didOpen: (toast) => {
         toast.onmouseenter = Swal.stopTimer;
         toast.onmouseleave = Swal.resumeTimer;
+    },
+    showClass: {
+        popup: "ios-toast-show",
+    },
+    hideClass: {
+        popup: "ios-toast-hide",
     },
 });
 
@@ -43,7 +54,7 @@ export const useAuth = () => {
             navigate('/home');
         } catch (error) {
             Toast.fire({
-                title: "Username/Password incorrectos",
+                title: "Invalid username or password",
                 icon: "error",
             });
         }
@@ -59,7 +70,7 @@ export const useAuth = () => {
             navigate('/login');
         } catch (error) {
             Toast.fire({
-                title: "Error al cerrar sesión",
+                title: "Logout failed",
                 icon: "error",
             });
         }

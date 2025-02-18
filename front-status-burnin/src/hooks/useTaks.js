@@ -1,9 +1,10 @@
 import { useReducer, useState } from "react"
 import { tasksReducer } from "../reducers/tasksReducer"
-import { changeStatus, createTask, createWorkingOn, deleteTask, deleteWorkingOn, generateLog, getAllTasks, getStatus, getWorkingOn, updateTask } from "../services/tasksService";
+import { changeStatus, createTask, createWorkingOn, deleteTask, deleteWorkingOn, generateLog, getAllTasks, getBurninActivityLogs, getStatus, getWorkingOn, updateTask } from "../services/tasksService";
 import { statusReducer } from "../reducers/statusReducer";
 import Swal from "sweetalert2";
 import { workingOnReducer } from "../reducers/workingOnReducer";
+import { burninLogReducer } from "../reducers/burninActLogReducer";
 
 
 const initialTaskForm = {
@@ -98,6 +99,7 @@ export const useTasks = () => {
     const [tasks, dispatch] = useReducer(tasksReducer, [])
     const [status, dispatchStatus] = useReducer(statusReducer, [])
     const [working_on, dispatchWorkingOn] = useReducer(workingOnReducer, [])
+    const [burninLog, dispatchBurninLog] = useReducer(burninLogReducer, [])
     const [taskSelected, setTaskSelected] = useState(initialTaskForm)
     const [statusSelected, setStatusSelected] = useState([])
     const [visibleForm, setVisibleForm] = useState(false);
@@ -137,6 +139,18 @@ export const useTasks = () => {
             })
         } catch (error) {
             console.error('Error fetching working_on:', error)
+        }
+    }
+
+    const getBurninLog = async () => {
+        try {
+            const response = await getBurninActivityLogs();
+            dispatchBurninLog({
+                type: 'loadLog',
+                payload: response.data
+            })
+        } catch (error) {
+            console.error('Error fetching burnin logs:', error)
         }
     }
 
@@ -409,6 +423,7 @@ export const useTasks = () => {
         visibleTask,
         statusSelected,
         working_on,
+        burninLog,
 
         handlerOpenForm,
         handlerCloseForm,
@@ -425,6 +440,7 @@ export const useTasks = () => {
         handlerAddWorkingOn,
         handlerDeleteWorkingOn,
         handlerGenerateLog,
+        getBurninLog,
 
     }
 }

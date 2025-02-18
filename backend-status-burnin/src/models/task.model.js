@@ -2,6 +2,7 @@ import { Status } from "../schemas/status.schema.js";
 import { Task } from "../schemas/task.schema.js";
 import { User } from "../schemas/user.schema.js";
 import { WorkingOn } from "../schemas/working_on.schema.js";
+import { BCActivityLog, BurninActivityLog } from "../schemas/activity_log.schema.js";
 //DAYJS
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc.js";
@@ -45,7 +46,32 @@ export class TaskModel {
             })
             return workin_on;
         } catch (error) {
+            console.error('Error in TaskModel.getWorkingOn', error);
+            throw error;
+        }
+    }
 
+    static async getBurninActivityLog() {
+        try {
+            const burnin_activity_log = await BurninActivityLog.findAll({
+                order: [['id', 'DESC']]
+            })
+            return burnin_activity_log;
+        } catch (error) {
+            console.error('Error in TaskModel.getBurninActivityLog', error);
+            throw error;
+        }
+    }
+
+    static async getBCActivityLog() {
+        try {
+            const bc_activity_log = await BCActivityLog.findAll({
+                order: [['id', 'DESC']]
+            })
+            return bc_activity_log;
+        } catch (error) {
+            console.error('Error in TaskModel.getBurninActivityLog', error);
+            throw error;
         }
     }
 
@@ -259,9 +285,9 @@ export class TaskModel {
                 return acc;
             }, {});
 
+            // Prepare Excel Workbook
             const workbook = new ExcelJS.Workbook();
             const sheetName = `Shift ${shift} - ${formattedDate}`;
-
             const fileName = input.area === 'Burnin'
                 ? `Burnin Shift Activities.xlsx`
                 : input.area === 'BC'
@@ -269,7 +295,6 @@ export class TaskModel {
                     : `Unknown Area Shift Activities.xlsx`;
 
             const sheet = workbook.addWorksheet(sheetName);
-
             sheet.addRow(['Date', 'Shift', 'Activities', 'Description', 'Engineer']);
             const headerRow = sheet.getRow(1);
             headerRow.eachCell((cell) => {
@@ -283,7 +308,7 @@ export class TaskModel {
                 cell.alignment = { vertical: 'middle', horizontal: 'center' };
             });
 
-            await Promise.all(tasks.map(async (task) => {
+            for (const task of tasks) {
                 const workingOnUsers = await Promise.all(taskUserMap[task.id]?.map(async (user_id) => {
                     const user = await User.findByPk(user_id);
                     if (user && user.dataValues.shift === shift) {
@@ -294,12 +319,39 @@ export class TaskModel {
 
                 const validUsers = workingOnUsers.filter(name => name !== null);
 
+                // Determine the appropriate activity log table
+                const ActivityLogModel = input.area === 'Burnin' ? BurninActivityLog : BCActivityLog;
+
+                // Check if an activity log already exists for the same date and shift
+                let activityLog = await ActivityLogModel.findOne({
+                    where: {
+                        date: formattedDate,
+                        shift: shift,
+                        task_id: task.id
+                    }
+                });
+
+                if (activityLog) {
+                    // Update existing activity log
+                    activityLog.engineers = validUsers.join(', ');
+                    await activityLog.save();
+                } else {
+                    // Create new activity log
+                    await ActivityLogModel.create({
+                        date: formattedDate,
+                        shift: shift,
+                        task_id: task.id,
+                        engineers: validUsers.join(', '),
+                    });
+                }
+
+                // Add row to Excel sheet
                 const row = sheet.addRow([formattedDate, shift, task.title, task.description, validUsers.join(', ')]);
                 row.eachCell((cell) => {
                     cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
                     cell.alignment = { vertical: 'top', wrapText: true };
                 });
-            }));
+            }
 
             sheet.columns = [
                 { key: 'date', width: 15 },
@@ -317,6 +369,8 @@ export class TaskModel {
             throw error;
         }
     }
+
+
 
 
 

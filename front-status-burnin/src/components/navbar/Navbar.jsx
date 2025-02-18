@@ -70,18 +70,26 @@ export const Navbar = () => {
                       >
                         Users Manage
                       </NavLink>
-                      <button
+                      {/* <button
                         className="block cursor-pointer rounded-b-md w-full text-left px-4 py-2 hover:bg-white/20 transition-colors"
                         onClick={() => {
                           setIsUsersOpen(false);
                         }}
                       >
                         Users Tasks Manage
-                      </button>
+                      </button> */}
                     </div>
                   )}
                 </>
               )}
+
+              <NavLink
+                className="w-auto mr-2 hover:text-blue-500 h-8 rounded-full flex items-center justify-center transition-colors text-sm font-semibold hover:cursor-pointer"
+                aria-label="Users"
+                to={"/activity-logs"}
+              >
+                ACTIVITY LOG
+              </NavLink>
 
               {/* User */}
               <button
