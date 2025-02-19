@@ -62,9 +62,13 @@ export const TaskCard = ({ task, color, activeId, status }) => {
     (wkon) => wkon.task_id === task.id && wkon.user_id === login.user.id
   );
 
+  const shouldAssing = task.assigned_to === login.user.id;
+
   return (
     <div
-      className={`cursor-grab rounded-3xl bg-gradient-to-br ${color} p-4 shadow-sm relative`}
+      className={`cursor-grab rounded-3xl bg-gradient-to-br ${color} p-4 shadow-sm relative ${
+        shouldAssing && "border border-blue-400 shadow-blue-500"
+      }`}
       style={style}
       ref={setNodeRef}
       {...listeners}

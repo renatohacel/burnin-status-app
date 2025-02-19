@@ -233,7 +233,7 @@ export class TaskModel {
     static async generate_activity_log_excel({ input }) {
         try {
             const date = dayjs().tz("America/Mexico_City");
-            const formattedDate = date.format("YYYY-MM-DD");
+            let formattedDate = date.format("YYYY-MM-DD");
             const formattedTime = date.format("HH:mm:ss");
 
             const shift = (formattedTime >= '07:00:00' && formattedTime < '15:00:00')
@@ -243,6 +243,11 @@ export class TaskModel {
                     : (formattedTime >= '22:30:00' || formattedTime < '07:00:00')
                         ? 3
                         : 'Unknown Shift';
+
+            // Adjust date for shift 3
+            if (shift === 3 && formattedTime < '07:00:00') {
+                formattedDate = date.subtract(1, 'day').format("YYYY-MM-DD");
+            }
 
             if (shift !== input.shift) {
                 return false;
@@ -319,12 +324,14 @@ export class TaskModel {
 
                 const validUsers = workingOnUsers.filter(name => name !== null);
 
-                // Add row to Excel sheet
-                const row = sheet.addRow([formattedDate, shift, task.title, task.description, validUsers.join(', ')]);
-                row.eachCell((cell) => {
-                    cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
-                    cell.alignment = { vertical: 'top', wrapText: true };
-                });
+                // Only add to Excel if there are engineers assigned
+                if (validUsers.length > 0) {
+                    const row = sheet.addRow([formattedDate, shift, task.title, task.description, validUsers.join(', ')]);
+                    row.eachCell((cell) => {
+                        cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+                        cell.alignment = { vertical: 'top', wrapText: true };
+                    });
+                }
             }
 
             sheet.columns = [
@@ -344,10 +351,12 @@ export class TaskModel {
         }
     }
 
+
+
     static async generate_activity_log_db({ input }) {
         try {
             const date = dayjs().tz("America/Mexico_City");
-            const formattedDate = date.format("YYYY-MM-DD");
+            let formattedDate = date.format("YYYY-MM-DD");
             const formattedTime = date.format("HH:mm:ss");
 
             const shift = (formattedTime >= '07:00:00' && formattedTime < '15:00:00')
@@ -357,6 +366,11 @@ export class TaskModel {
                     : (formattedTime >= '22:30:00' || formattedTime < '07:00:00')
                         ? 3
                         : 'Unknown Shift';
+
+            // Adjust date for shift 3
+            if (shift === 3 && formattedTime < '07:00:00') {
+                formattedDate = date.subtract(1, 'day').format("YYYY-MM-DD");
+            }
 
             if (shift !== input.shift) {
                 return false;
@@ -410,31 +424,34 @@ export class TaskModel {
 
                 const validUsers = workingOnUsers.filter(name => name !== null);
 
-                // Determine the appropriate activity log table
-                const ActivityLogModel = input.area === 'Burnin' ? BurninActivityLog : BCActivityLog;
+                // Only proceed if there are engineers assigned
+                if (validUsers.length > 0) {
+                    // Determine the appropriate activity log table
+                    const ActivityLogModel = input.area === 'Burnin' ? BurninActivityLog : BCActivityLog;
 
-                // Check if an activity log already exists for the same date and shift
-                let activityLog = await ActivityLogModel.findOne({
-                    where: {
-                        date: formattedDate,
-                        shift: shift,
-                        activity: task.title
-                    }
-                });
-
-                if (activityLog) {
-                    // Update existing activity log
-                    activityLog.engineers = validUsers.join(', ');
-                    await activityLog.save();
-                } else {
-                    // Create new activity log
-                    await ActivityLogModel.create({
-                        date: formattedDate,
-                        shift: shift,
-                        activity: task.title,
-                        description: task.description,
-                        engineers: validUsers.join(', '),
+                    // Check if an activity log already exists for the same date and shift
+                    let activityLog = await ActivityLogModel.findOne({
+                        where: {
+                            date: formattedDate,
+                            shift: shift,
+                            activity: task.title
+                        }
                     });
+
+                    if (activityLog) {
+                        // Update existing activity log
+                        activityLog.engineers = validUsers.join(', ');
+                        await activityLog.save();
+                    } else {
+                        // Create new activity log
+                        await ActivityLogModel.create({
+                            date: formattedDate,
+                            shift: shift,
+                            activity: task.title,
+                            description: task.description,
+                            engineers: validUsers.join(', '),
+                        });
+                    }
                 }
             }
 
@@ -444,5 +461,7 @@ export class TaskModel {
             throw error;
         }
     }
+
+
 
 }

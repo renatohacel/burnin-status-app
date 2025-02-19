@@ -5,8 +5,12 @@ import { Navbar } from "../components/navbar/Navbar";
 import { Footer } from "../components/template/Footer";
 import { UsersPage } from "../pages/users/UsersPage";
 import { ActivityLogsPage } from "../pages/activity_logs/ActivityLogsPage";
+import { UsersTracking } from "../pages/users/UsersTracking";
+import { useContext } from "react";
+import { AuthContext } from "../auth/context/AuthContext";
 
 export const StatusRoutes = () => {
+  const { login } = useContext(AuthContext);
   return (
     <StatusProvider>
       <div className="min-h-screen flex flex-col bg-black text-white">
@@ -15,8 +19,16 @@ export const StatusRoutes = () => {
           <Routes>
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="home" element={<StatusPage />} />
-            <Route path="users-manage" element={<UsersPage />} />
+
             <Route path="activity-logs" element={<ActivityLogsPage />} />
+            {login.user.isAdmin === 1 ? (
+              <>
+                <Route path="users-manage" element={<UsersPage />} />
+                <Route path="users-tracking" element={<UsersTracking />} />
+              </>
+            ) : (
+              <Route path="*" element={<Navigate to="/home" />} />
+            )}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>

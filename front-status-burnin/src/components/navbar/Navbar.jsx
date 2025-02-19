@@ -60,7 +60,7 @@ export const Navbar = () => {
                   </button>
 
                   {isUsersOpen && (
-                    <div className="absolute right-24 top-full w-48 rounded-lg shadow-lg bg-black/90 backdrop-blur-xl border border-white/10">
+                    <div className="absolute right-48 top-full w-48 rounded-lg shadow-lg bg-black/90 backdrop-blur-xl border border-white/10">
                       <NavLink
                         className="block cursor-pointer rounded-t-md w-full text-left px-4 py-2 hover:bg-white/20 transition-colors"
                         onClick={() => {
@@ -70,14 +70,15 @@ export const Navbar = () => {
                       >
                         Users Manage
                       </NavLink>
-                      {/* <button
+                      <NavLink
                         className="block cursor-pointer rounded-b-md w-full text-left px-4 py-2 hover:bg-white/20 transition-colors"
                         onClick={() => {
                           setIsUsersOpen(false);
                         }}
+                        to={"/users-tracking"}
                       >
-                        Users Tasks Manage
-                      </button> */}
+                        User Activity Tracking
+                      </NavLink>
                     </div>
                   )}
                 </>

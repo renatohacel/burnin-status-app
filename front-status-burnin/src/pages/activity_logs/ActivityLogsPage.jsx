@@ -97,7 +97,7 @@ export const ActivityLogsPage = () => {
 
           {/* Botón para Exportar */}
           <button
-            className="w-44 hover:text-blue-500 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-sm font-semibold hover:cursor-pointer gap-1 px-4 -mb-[30px]"
+            className="w-44 hover:text-blue-500 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-sm font-semibold hover:cursor-pointer gap-1 px-4 -mb-6"
             onClick={() => handlerGenerateLogExcel(login.user)}
           >
             SAVE IN EXCEL <Sheet className="w-5" />

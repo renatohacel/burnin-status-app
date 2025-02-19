@@ -10,6 +10,7 @@ export const UsersPage = () => {
   return (
     <div className="h-auto bg-black text-white flex flex-col">
       <main className="container mx-auto px-4 py-2 flex-1">
+        <h1 className="text-2xl font-semibold text-center">USERS MANAGE</h1>
         <div className="flex justify-end mb-4 gap-4">
           <button
             onClick={handlerOpenFormUsers}

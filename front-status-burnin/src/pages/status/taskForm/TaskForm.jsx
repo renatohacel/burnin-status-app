@@ -39,17 +39,23 @@ export const Toast = Swal.mixin({
 export const TaskForm = ({ formTitle }) => {
   const { login } = useContext(AuthContext);
   const { tasksHook, usersHook } = useContext(StatusContext);
-  const { initialTaskForm, taskSelected, handlerAddTask } = tasksHook;
+  const {
+    initialTaskForm,
+    taskSelected,
+    handlerAddTask,
+    userTrackingSelected,
+  } = tasksHook;
   const { users, getUsers } = usersHook;
 
   const [taskForm, setTaskForm] = useState(initialTaskForm);
   const { id, title, description, status, area } = taskForm;
   const [selectedUser, setSelectedUser] = useState(null);
-
   useEffect(() => {
     getUsers();
     setTaskForm({ ...taskSelected });
-    setSelectedUser(taskSelected.assigned_to);
+    setSelectedUser(
+      userTrackingSelected.assigned_to || taskSelected.assigned_to
+    );
   }, [taskSelected]);
 
   const onInputChange = (e) => {

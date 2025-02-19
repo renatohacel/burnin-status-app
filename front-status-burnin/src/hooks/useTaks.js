@@ -105,6 +105,7 @@ export const useTasks = () => {
     const [bcLog, dispatchBCLog] = useReducer(bcLogReducer, [])
     const [taskSelected, setTaskSelected] = useState(initialTaskForm)
     const [statusSelected, setStatusSelected] = useState([])
+    const [userTrackingSelected, setUserTrackingSelected] = useState({})
     const [visibleForm, setVisibleForm] = useState(false);
     const [visibleTask, setVisibleTask] = useState(false);
     const [editing, setEditing] = useState(false)
@@ -447,12 +448,18 @@ export const useTasks = () => {
     const handlerCloseForm = () => {
         setVisibleForm(false)
         setTaskSelected(initialTaskForm)
+        setUserTrackingSelected({})
     }
 
     const handlerTaskSelected = (task) => {
         setTaskSelected(task)
         setVisibleForm(true)
         setEditing(true)
+    }
+
+    const handlerUserTracking = (user) => {
+        setUserTrackingSelected(user)
+        setVisibleForm(true)
     }
 
     const handlerTaskDetail = ({ task, status }) => {
@@ -479,6 +486,7 @@ export const useTasks = () => {
         working_on,
         burninLog,
         bcLog,
+        userTrackingSelected,
 
         handlerOpenForm,
         handlerCloseForm,
@@ -498,6 +506,7 @@ export const useTasks = () => {
         handlerGenerateLogExcel,
         getBurninLog,
         getBCLog,
+        handlerUserTracking,
 
     }
 }
