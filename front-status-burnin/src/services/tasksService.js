@@ -83,14 +83,23 @@ export const deleteWorkingOn = async (id) => {
 
 
 //ACTIVITY LOGS -----------------------------------------------------------------
-export const generateLog = async (input) => {
+export const generateLogExcel = async (input) => {
     try {
-        const response = await axios.post(`${BASE_URL}/generate_activity_log`, input, { withCredentials: true })
+        const response = await axios.post(`${BASE_URL}/generate_activity_log_excel`, input, { withCredentials: true });
         return response;
     } catch (error) {
-        return error.response
+        return error.response;
     }
-}
+};
+
+export const generateLogDB = async (input) => {
+    try {
+        const response = await axios.post(`${BASE_URL}/generate_activity_log_db`, input, { withCredentials: true });
+        return response;
+    } catch (error) {
+        return error.response;
+    }
+};
 export const getBurninActivityLogs = async () => {
     try {
         const response = await axios.get(`${BASE_URL}/burnin_activity_log`, {}, { withCredentials: true })

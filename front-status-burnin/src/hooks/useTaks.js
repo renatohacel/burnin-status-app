@@ -1,10 +1,11 @@
 import { useReducer, useState } from "react"
 import { tasksReducer } from "../reducers/tasksReducer"
-import { changeStatus, createTask, createWorkingOn, deleteTask, deleteWorkingOn, generateLog, getAllTasks, getBurninActivityLogs, getStatus, getWorkingOn, updateTask } from "../services/tasksService";
+import { changeStatus, createTask, createWorkingOn, deleteTask, deleteWorkingOn, generateLogDB, generateLogExcel, getAllTasks, getBCActivityLogs, getBurninActivityLogs, getStatus, getWorkingOn, updateTask } from "../services/tasksService";
 import { statusReducer } from "../reducers/statusReducer";
 import Swal from "sweetalert2";
 import { workingOnReducer } from "../reducers/workingOnReducer";
 import { burninLogReducer } from "../reducers/burninActLogReducer";
+import { bcLogReducer } from "../reducers/bcActLogReducer";
 
 
 const initialTaskForm = {
@@ -100,6 +101,7 @@ export const useTasks = () => {
     const [status, dispatchStatus] = useReducer(statusReducer, [])
     const [working_on, dispatchWorkingOn] = useReducer(workingOnReducer, [])
     const [burninLog, dispatchBurninLog] = useReducer(burninLogReducer, [])
+    const [bcLog, dispatchBCLog] = useReducer(bcLogReducer, [])
     const [taskSelected, setTaskSelected] = useState(initialTaskForm)
     const [statusSelected, setStatusSelected] = useState([])
     const [visibleForm, setVisibleForm] = useState(false);
@@ -146,6 +148,18 @@ export const useTasks = () => {
         try {
             const response = await getBurninActivityLogs();
             dispatchBurninLog({
+                type: 'loadLog',
+                payload: response.data
+            })
+        } catch (error) {
+            console.error('Error fetching burnin logs:', error)
+        }
+    }
+
+    const getBCLog = async () => {
+        try {
+            const response = await getBCActivityLogs();
+            dispatchBCLog({
                 type: 'loadLog',
                 payload: response.data
             })
@@ -346,14 +360,53 @@ export const useTasks = () => {
         });
     }
 
-    const handlerGenerateLog = async (user) => {
+    const handlerGenerateLogExcel = async (user) => {
+        ToastLoading.fire({
+            title: "Generating activity log (Excel)...",
+            text: "Please wait a moment",
+        });
+        setTimeout(async () => {
+            try {
+                const response = await generateLogExcel(user);
+                if (response.status === 200) {
+                    ToastSuccess.fire({
+                        icon: "success",
+                        title: "Activity Log Generated!",
+                        text: "The activity log Excel was generated successfully",
+                    });
+                } else if (response.status === 409) {
+                    ToastSuccess.fire({
+                        icon: "warning",
+                        title: "Not Allowed",
+                        text: response.data.message,
+                    });
+                    console.error(response.data.message);
+                } else {
+                    ToastSuccess.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "An error occurred while generating the activity log Excel",
+                    });
+                }
+            } catch (error) {
+                console.error("Error in handlerGenerateLogExcel:", error);
+                ToastSuccess.fire({
+                    icon: "error",
+                    title: "Unexpected Error",
+                    text: "An unexpected error occurred. Please try again later.",
+                });
+            }
+        }, 1000);
+    };
+
+    const handlerGenerateLogDB = async (user) => {
         ToastLoading.fire({
             title: "Generating activity log...",
             text: "Please wait a moment",
         });
         setTimeout(async () => {
             try {
-                const response = await generateLog(user);
+                const response = await generateLogDB(user);
                 if (response.status === 200) {
                     ToastSuccess.fire({
                         icon: "success",
@@ -371,11 +424,11 @@ export const useTasks = () => {
                     ToastSuccess.fire({
                         icon: "error",
                         title: "Error",
-                        text: "An error occurred while generating the activity log",
+                        text: "An error occurred while generating the activity log in the database",
                     });
                 }
             } catch (error) {
-                console.error("Error in handlerGenerateLog:", error);
+                console.error("Error in handlerGenerateLogDB:", error);
                 ToastSuccess.fire({
                     icon: "error",
                     title: "Unexpected Error",
@@ -383,7 +436,7 @@ export const useTasks = () => {
                 });
             }
         }, 1000);
-    }
+    };
 
     const handlerOpenForm = () => {
         setVisibleForm(true)
@@ -424,6 +477,7 @@ export const useTasks = () => {
         statusSelected,
         working_on,
         burninLog,
+        bcLog,
 
         handlerOpenForm,
         handlerCloseForm,
@@ -439,8 +493,10 @@ export const useTasks = () => {
         getWorkingOnTasks,
         handlerAddWorkingOn,
         handlerDeleteWorkingOn,
-        handlerGenerateLog,
+        handlerGenerateLogDB,
+        handlerGenerateLogExcel,
         getBurninLog,
+        getBCLog,
 
     }
 }

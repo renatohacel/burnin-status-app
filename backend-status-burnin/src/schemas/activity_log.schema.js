@@ -17,9 +17,13 @@ export const BurninActivityLog = sequelize.define('burnin_activity_log', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    task_id: {
-        type: DataTypes.INTEGER,
+    activity: {
+        type: DataTypes.TEXT,
         allowNull: false,
+    },
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: true,
     },
     engineers: {
         type: DataTypes.TEXT,
@@ -47,9 +51,13 @@ export const BCActivityLog = sequelize.define('bc_activity_log', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    task_id: {
-        type: DataTypes.INTEGER,
+    activity: {
+        type: DataTypes.TEXT,
         allowNull: false,
+    },
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: true,
     },
     engineers: {
         type: DataTypes.TEXT,

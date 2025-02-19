@@ -230,7 +230,7 @@ export class TaskModel {
 
     }
 
-    static async generate_activity_log({ input }) {
+    static async generate_activity_log_excel({ input }) {
         try {
             const date = dayjs().tz("America/Mexico_City");
             const formattedDate = date.format("YYYY-MM-DD");
@@ -319,32 +319,6 @@ export class TaskModel {
 
                 const validUsers = workingOnUsers.filter(name => name !== null);
 
-                // Determine the appropriate activity log table
-                const ActivityLogModel = input.area === 'Burnin' ? BurninActivityLog : BCActivityLog;
-
-                // Check if an activity log already exists for the same date and shift
-                let activityLog = await ActivityLogModel.findOne({
-                    where: {
-                        date: formattedDate,
-                        shift: shift,
-                        task_id: task.id
-                    }
-                });
-
-                if (activityLog) {
-                    // Update existing activity log
-                    activityLog.engineers = validUsers.join(', ');
-                    await activityLog.save();
-                } else {
-                    // Create new activity log
-                    await ActivityLogModel.create({
-                        date: formattedDate,
-                        shift: shift,
-                        task_id: task.id,
-                        engineers: validUsers.join(', '),
-                    });
-                }
-
                 // Add row to Excel sheet
                 const row = sheet.addRow([formattedDate, shift, task.title, task.description, validUsers.join(', ')]);
                 row.eachCell((cell) => {
@@ -365,14 +339,110 @@ export class TaskModel {
 
             return true;
         } catch (error) {
-            console.error('Error in TaskModel.generate_activiy_log', error);
+            console.error('Error in TaskModel.generate_activity_log_excel', error);
             throw error;
         }
     }
 
+    static async generate_activity_log_db({ input }) {
+        try {
+            const date = dayjs().tz("America/Mexico_City");
+            const formattedDate = date.format("YYYY-MM-DD");
+            const formattedTime = date.format("HH:mm:ss");
 
+            const shift = (formattedTime >= '07:00:00' && formattedTime < '15:00:00')
+                ? 1
+                : (formattedTime >= '15:00:00' && formattedTime < '22:30:00')
+                    ? 2
+                    : (formattedTime >= '22:30:00' || formattedTime < '07:00:00')
+                        ? 3
+                        : 'Unknown Shift';
 
+            if (shift !== input.shift) {
+                return false;
+            }
 
+            const status = await Status.findAll({
+                where: {
+                    date: formattedDate
+                }
+            });
 
+            const tasks_ids = [...new Set(status.map((st) => st.dataValues.task_id))];
+
+            const all_tasks = await Promise.all(tasks_ids.map(async (task_id) => {
+                const task = await Task.findByPk(task_id);
+                if (task && task.dataValues.area === input.area) {
+                    return task;
+                }
+                return null;
+            }));
+
+            const tasks = all_tasks.filter((task) => task !== null);
+
+            const all_eng = await Promise.all(tasks_ids.map(async (task_id) => {
+                const wkOn = await WorkingOn.findAll({
+                    where: {
+                        task_id: task_id
+                    }
+                });
+                return wkOn.map(wk => wk.dataValues);
+            }));
+
+            const all_eng_dataValues = all_eng.flat();
+
+            const taskUserMap = all_eng_dataValues.reduce((acc, curr) => {
+                if (!acc[curr.task_id]) {
+                    acc[curr.task_id] = [];
+                }
+                acc[curr.task_id].push(curr.user_id);
+                return acc;
+            }, {});
+
+            for (const task of tasks) {
+                const workingOnUsers = await Promise.all(taskUserMap[task.id]?.map(async (user_id) => {
+                    const user = await User.findByPk(user_id);
+                    if (user && user.dataValues.shift === shift) {
+                        return user.dataValues.name;
+                    }
+                    return null;
+                }) || []);
+
+                const validUsers = workingOnUsers.filter(name => name !== null);
+
+                // Determine the appropriate activity log table
+                const ActivityLogModel = input.area === 'Burnin' ? BurninActivityLog : BCActivityLog;
+
+                // Check if an activity log already exists for the same date and shift
+                let activityLog = await ActivityLogModel.findOne({
+                    where: {
+                        date: formattedDate,
+                        shift: shift,
+                        activity: task.title
+                    }
+                });
+
+                if (activityLog) {
+                    // Update existing activity log
+                    activityLog.engineers = validUsers.join(', ');
+                    await activityLog.save();
+                } else {
+                    // Create new activity log
+                    await ActivityLogModel.create({
+                        date: formattedDate,
+                        shift: shift,
+                        activity: task.title,
+                        description: task.description,
+                        engineers: validUsers.join(', '),
+                    });
+                }
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Error in TaskModel.generate_activity_log_db', error);
+            throw error;
+        }
+    }
 
 }

@@ -117,17 +117,29 @@ export class TaskController {
         }
     }
 
-    static async generate_activity_log(req, res) {
+    static async generate_activity_log_excel(req, res) {
         try {
-            const result = await TaskModel.generate_activity_log({ input: req.body })
-            if (!result) return res.status(409).json({ message: 'You are not allowed to alter the activity log outside of your work hours' })
+            const result = await TaskModel.generate_activity_log_excel({ input: req.body });
+            if (!result) return res.status(409).json({ message: 'You are not allowed to alter the activity log outside of your work hours' });
 
-            return res.status(200).send({ message: 'activity log generated successfully' })
+            return res.status(200).send({ message: 'Activity log Excel generated successfully' });
         } catch (error) {
             console.log(error);
             if (error.code === 'EBUSY') {
                 return res.status(409).send({ message: 'The file is currently in use. Please close it and try again.' });
             }
+            return res.status(500).send({ message: 'Server error' });
+        }
+    }
+
+    static async generate_activity_log_db(req, res) {
+        try {
+            const result = await TaskModel.generate_activity_log_db({ input: req.body });
+            if (!result) return res.status(409).json({ message: 'You are not allowed to alter the activity log outside of your work hours' });
+
+            return res.status(200).send({ message: 'Activity log generated successfully' });
+        } catch (error) {
+            console.log(error);
             return res.status(500).send({ message: 'Server error' });
         }
     }

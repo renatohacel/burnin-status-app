@@ -166,3 +166,19 @@
     font-style: italic;
     margin-top: 2px;
 }
+
+/* Cambia el color del icono del input date a blanco */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    /* Invierte los colores (blanco en modo oscuro) */
+    opacity: 0.8;
+    /* Hace el icono un poco más visible */
+    cursor: pointer;
+    /* Indica que es interactivo */
+}
+
+/* Opcional: Ajustar el tamaño del icono */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    width: 18px;
+    height: 18px;
+}

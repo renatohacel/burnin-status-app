@@ -29,7 +29,7 @@ export const StatusPage = () => {
     handlerOpenForm,
     editing,
     visibleTask,
-    handlerGenerateLog,
+    handlerGenerateLogDB,
   } = tasksHook;
 
   const [activeId, setActiveId] = useState(null);
@@ -96,7 +96,7 @@ export const StatusPage = () => {
         <div className="flex justify-end mb-4 gap-4">
           <button
             className="w-52 hover:text-blue-500 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-sm font-semibold hover:cursor-pointer text-nowrap"
-            onClick={() => handlerGenerateLog(login.user)}
+            onClick={() => handlerGenerateLogDB(login.user)}
           >
             GENERATE ACTIVITY LOG <FilePlus className="ml-1 w-5 mb-[2px]" />
           </button>

@@ -27,7 +27,8 @@ tasksRouter.delete('/working_on/:id', TaskController.delete_working_on);
 
 //ACTIVITY LOGS
 //generate activity log
-tasksRouter.post('/generate_activity_log', TaskController.generate_activity_log);
+tasksRouter.post('/generate_activity_log_excel', TaskController.generate_activity_log_excel);
+tasksRouter.post('/generate_activity_log_db', TaskController.generate_activity_log_db);
 //get burnin activity log
 tasksRouter.get('/burnin_activity_log', TaskController.getBurninActivityLog);
 //get bc activity log
