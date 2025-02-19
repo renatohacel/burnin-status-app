@@ -25,6 +25,7 @@ export const ActivityLogsPage = () => {
     tasksHook;
   const [filteredRecords, setFilteredRecords] = useState([]);
   const [dateFilter, setDateFilter] = useState(formattedDate);
+  const [selectedArea, setSelectedArea] = useState(login.user.area); // Guarda el área seleccionada
 
   useEffect(() => {
     if (login.user.isAdmin === 1) {
@@ -39,13 +40,21 @@ export const ActivityLogsPage = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [burninLog, bcLog, dateFilter]);
+  }, [burninLog, bcLog, dateFilter, selectedArea]);
 
   const applyFilters = () => {
-    let records = login.user.area === "Burnin" ? [...burninLog] : [...bcLog];
+    let records = [];
+
+    if (selectedArea === "Burnin") {
+      records = [...burninLog];
+    } else if (selectedArea === "BC") {
+      records = [...bcLog];
+    }
+
     records = records.filter(
       (record) => record.date?.toLowerCase() === dateFilter.toLowerCase()
     );
+
     setFilteredRecords(records);
   };
 
@@ -54,6 +63,7 @@ export const ActivityLogsPage = () => {
       <main className="container mx-auto flex flex-col gap-6">
         {/* Título y Contenedor de Fecha y Exportación */}
         <h1 className="text-2xl font-semibold text-center">ACTIVITY LOG</h1>
+
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           {/* Selector de Fecha */}
           <div className="flex flex-col text-center">
@@ -66,6 +76,25 @@ export const ActivityLogsPage = () => {
               className="bg-white/10 px-4 py-2 rounded-lg border border-white/15 text-white focus:ring-2 focus:ring-blue-500 transition-all"
             />
           </div>
+
+          {/* Selector de Área (solo para Admins) */}
+          {login.user.isAdmin === 1 && (
+            <div className="flex flex-col text-center">
+              <label className="text-sm text-white/60 mb-1">Select Area</label>
+              <select
+                value={selectedArea}
+                onChange={(e) => setSelectedArea(e.target.value)}
+                className="bg-black text-white px-4 py-2 rounded-lg border border-white/15 focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer appearance-none"
+              >
+                <option className="bg-black text-white" value="Burnin">
+                  Burnin
+                </option>
+                <option className="bg-black text-white" value="BC">
+                  BC
+                </option>
+              </select>
+            </div>
+          )}
 
           {/* Botón para Exportar */}
           <button
@@ -85,7 +114,7 @@ export const ActivityLogsPage = () => {
             >
               {/* Título del Turno */}
               <h2 className="text-lg font-semibold text-center text-white/80 mb-6">
-                {shift.title}
+                {shift.title} - {selectedArea}
               </h2>
 
               {/* Tabla */}
