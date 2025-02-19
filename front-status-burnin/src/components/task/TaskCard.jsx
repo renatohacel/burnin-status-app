@@ -1,12 +1,12 @@
 import { useDraggable } from "@dnd-kit/core";
 import { Eye, Pencil, Pin, PinOff, Trash } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { StatusContext } from "../../context/StatusContext";
 import { AuthContext } from "../../auth/context/AuthContext";
 
 export const TaskCard = ({ task, color, activeId, status }) => {
   const { login } = useContext(AuthContext);
-  const { tasksHook } = useContext(StatusContext);
+  const { tasksHook, usersHook } = useContext(StatusContext);
   const {
     handlerTaskSelected,
     handlerDeleteTask,
@@ -16,9 +16,11 @@ export const TaskCard = ({ task, color, activeId, status }) => {
     getWorkingOnTasks,
     working_on,
   } = tasksHook;
+  const { users, getUsers } = usersHook;
 
   useEffect(() => {
     getWorkingOnTasks();
+    getUsers();
   }, []);
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -106,6 +108,14 @@ export const TaskCard = ({ task, color, activeId, status }) => {
                 description: task.description,
                 status: task.status,
                 area: task.area,
+                assigned_to: {
+                  value: task.assigned_to,
+                  label:
+                    task.assigned_to === 0
+                      ? "All Team"
+                      : users.filter((user) => user.id === task.assigned_to)[0]
+                          ?.name,
+                },
               });
             }}
           >
@@ -123,15 +133,19 @@ export const TaskCard = ({ task, color, activeId, status }) => {
         </div>
       </div>
       <p className="text-xs text-white/60">{task.area}</p>
-      <p className="mt-2 text-white/60">{task.description}</p>
+      <p className="mt-2 text-white/90">{task.description}</p>
       <p className="mt-2 text-xs text-white/60">
         Last change at:{" "}
         {lastStatus
-          ? `${lastStatus.date} / ${lastStatus.time}hrs`
+          ? `${lastStatus.date} / ${lastStatus.time}hrs `
           : "No status yet"}
+        - By: {lastStatus ? lastStatus.updated_by : ""}
       </p>
-      <p className="mt-2 text-sm text-white/60">
-        By: {lastStatus ? lastStatus.updated_by : ""}
+      <p className="mt-2 text-xs text-white/60">
+        Assigned to:{" "}
+        {task.assigned_to === 0
+          ? "All Team"
+          : users.filter((user) => user.id === task.assigned_to)[0]?.name}
       </p>
     </div>
   );

@@ -25,8 +25,7 @@ export const ActivityLogsPage = () => {
     tasksHook;
   const [filteredRecords, setFilteredRecords] = useState([]);
   const [dateFilter, setDateFilter] = useState(formattedDate);
-  const [selectedArea, setSelectedArea] = useState(login.user.area); // Guarda el área seleccionada
-
+  const [selectedArea, setSelectedArea] = useState(login.user.area);
   useEffect(() => {
     if (login.user.isAdmin === 1) {
       getBurninLog();

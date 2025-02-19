@@ -13,7 +13,8 @@ const initialTaskForm = {
     title: "",
     description: "",
     status: "TO DO",
-    area: ''
+    area: '',
+    assigned_to: 0,
 }
 
 // Mezcla para Toast "top-end"

@@ -43,7 +43,7 @@ export const Navbar = () => {
               className="text-2xl font-medium hover:text-blue-500 transition-all duration-100 cursor-pointer"
               onClick={onClickHome}
             >
-              Burnin Task Status
+              Integration Task Status
             </button>
             {/* Button Section */}
             <div className="flex items-center gap-2 relative">

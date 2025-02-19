@@ -20,6 +20,7 @@ export const Task = sequelize.define('task', {
     status: {
         type: DataTypes.TEXT,
         allowNull: false,
+        defaultValue: 'TO DO',
     },
     area: {
         type: DataTypes.TEXT,
@@ -37,6 +38,11 @@ export const Task = sequelize.define('task', {
         type: DataTypes.TEXT,
         allowNull: false,
     },
+    assigned_to: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+    }
 }, {
     tableName: 'tasks',
     timestamps: false,

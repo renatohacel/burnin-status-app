@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { StatusContext } from "../../../context/StatusContext";
 import { AuthContext } from "../../../auth/context/AuthContext";
+import Select from "react-select";
 // Con plugin para zona horaria
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -37,20 +38,36 @@ export const Toast = Swal.mixin({
 
 export const TaskForm = ({ formTitle }) => {
   const { login } = useContext(AuthContext);
-  const { tasksHook } = useContext(StatusContext);
+  const { tasksHook, usersHook } = useContext(StatusContext);
   const { initialTaskForm, taskSelected, handlerAddTask } = tasksHook;
+  const { users, getUsers } = usersHook;
 
   const [taskForm, setTaskForm] = useState(initialTaskForm);
-
   const { id, title, description, status, area } = taskForm;
+  const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
+    getUsers();
     setTaskForm({ ...taskSelected });
+    setSelectedUser(taskSelected.assigned_to);
   }, [taskSelected]);
 
   const onInputChange = (e) => {
     const { name, value } = e.target;
     setTaskForm({ ...taskForm, [name]: value });
+  };
+  //options users
+  const userOptions = [
+    { value: 0, label: "All Team" },
+    ...users.map((user) => ({ value: user.id, label: user.name })),
+  ];
+
+  const onUserChange = (selectedOption) => {
+    setSelectedUser(selectedOption);
+    setTaskForm({
+      ...taskForm,
+      assigned_to: selectedOption?.value || 0,
+    });
   };
 
   const onSubmit = (e) => {
@@ -71,6 +88,7 @@ export const TaskForm = ({ formTitle }) => {
     if (id === 0) {
       const formData = {
         ...taskForm,
+        assigned_to: selectedUser?.value,
         title: title.toUpperCase(),
         date: formattedDate,
         time: formattedTime,
@@ -80,6 +98,7 @@ export const TaskForm = ({ formTitle }) => {
     } else if (id > 0) {
       const formData = {
         ...taskForm,
+        assigned_to: selectedUser?.value,
         title: title.toUpperCase(),
         date: formattedDate,
         time: formattedTime,
@@ -96,7 +115,7 @@ export const TaskForm = ({ formTitle }) => {
     >
       <h2 className="text-2xl font-semibold mb-6">{formTitle}</h2>
 
-      <div className="mb-4">
+      <div className="mb-2">
         <label htmlFor="title" className="block mb-1 text-white/80">
           Title
         </label>
@@ -111,7 +130,7 @@ export const TaskForm = ({ formTitle }) => {
         />
       </div>
 
-      <div className="mb-4">
+      <div className="mb-2">
         <label htmlFor="description" className="block mb-1 text-white/80">
           Description
         </label>
@@ -125,8 +144,49 @@ export const TaskForm = ({ formTitle }) => {
           className="w-full px-4 py-2 bg-black/30 text-white placeholder-gray-400 border border-white/10 rounded-md backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
         />
       </div>
+      {login.user.isAdmin === 1 && (
+        <div className="mb-2">
+          <label htmlFor="description" className="block mb-1 text-white/80">
+            Asigned To
+          </label>
+          <Select
+            name="assigned_to"
+            options={userOptions}
+            value={selectedUser}
+            onChange={onUserChange}
+            placeholder="Select user"
+            className="react-select-container"
+            classNamePrefix="react-select"
+            styles={{
+              control: (base) => ({
+                ...base,
+                backgroundColor: "rgba(0, 0, 0, 0.1)",
+                borderColor: "rgba(255, 255, 255, 0.1)",
+                color: "white",
+                padding: "2px",
+              }),
+              singleValue: (base) => ({
+                ...base,
+                color: "white",
+              }),
+              menu: (base) => ({
+                ...base,
+                backgroundColor: "rgba(0, 0, 0, 0.9)",
+                borderRadius: "8px",
+              }),
+              option: (base, { isFocused }) => ({
+                ...base,
+                backgroundColor: isFocused
+                  ? "rgba(255, 255, 255, 0.2)"
+                  : "transparent",
+                color: "white",
+              }),
+            }}
+          />
+        </div>
+      )}
 
-      <div className="mb-4">
+      <div className="mb-2">
         <label htmlFor="status" className="block mb-1 text-white/80">
           Status
         </label>
@@ -155,8 +215,12 @@ export const TaskForm = ({ formTitle }) => {
           onChange={onInputChange}
           className="w-full px-4 py-2  bg-black/30 text-white border border-white/10 rounded-md backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer"
         >
-          <option value="Burnin">Burnin</option>
-          <option value="BC">BC</option>
+          <option value="Burnin" className="bg-black text-white">
+            Burnin
+          </option>
+          <option value="BC" className="bg-black text-white">
+            BC
+          </option>
         </select>
       </div>
 
